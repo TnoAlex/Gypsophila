@@ -16,6 +16,9 @@ java.sourceCompatibility = JavaVersion.VERSION_11
 dependencies {
     testImplementation(kotlin("test"))
     implementation("org.yaml:snakeyaml:1.33")
+    implementation("org.jgrapht:jgrapht-core:1.5.1")
+    implementation("com.github.ajalt.clikt:clikt:3.5.1")
+    implementation("guru.nidi:graphviz-kotlin:0.18.1")
 }
 
 tasks.test {
