@@ -1,7 +1,9 @@
 package priv.alex.lexer.token
 
 class Token(
-    val type: TokenEnum,
+    val type: String,
     val rawText: String,
-    val textRange: Pair<Int, Int>
+    val textRange: Pair<Int, Int>,
+    val factoryId: String,
+    val tokenId: String
 )
