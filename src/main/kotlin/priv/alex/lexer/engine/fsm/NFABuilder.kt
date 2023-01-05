@@ -62,6 +62,9 @@ class NFABuilder(pattern: String) {
 
         while (true) {
             var utilRange: Pair<Int, Int>
+            addNode()
+            graph.addEdge(utilEnd,currentNode,RegexEdge(true))
+            utilEnd = currentNode
             if (lexer.currentToken.type == OPEN_PAREN) {
                 utilRange = expression()
                 nextStart = utilRange.first
@@ -76,7 +79,7 @@ class NFABuilder(pattern: String) {
             else {
                 utilRange = expression()
                 nextStart = utilRange.first
-                graph.addEdge(utilEnd, nextStart,RegexEdge(true))
+                graph.addEdge(utilEnd, nextStart, RegexEdge(true))
                 utilEnd = utilRange.second
             }
         }
@@ -95,12 +98,13 @@ class NFABuilder(pattern: String) {
         graph.addEdge(currentNode - 2, bifurcate, RegexEdge(true))
         var pos = factorConnection()
         graph.addEdge(pos.second, crossPos, RegexEdge(true))
-        val token = lexer.currentToken
+        var token = lexer.currentToken
         while (token.type == OR) {
-            val nowPos = pos
+            addNode()
             pos = factorConnection()
-            graph.addEdge(bifurcate, nowPos.first, RegexEdge(true))
+            graph.addEdge(bifurcate, pos.first, RegexEdge(true))
             graph.addEdge(pos.second, crossPos, RegexEdge(true))
+            token = lexer.currentToken
         }
         return Pair(utilStart, crossPos)
     }
