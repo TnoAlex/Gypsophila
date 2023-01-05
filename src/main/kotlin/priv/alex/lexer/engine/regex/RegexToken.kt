@@ -1,7 +1,7 @@
 package priv.alex.lexer.engine.regex
 
 
-class RegexToken(type: RegexTokenEnum) {
+class RegexToken(val type: RegexTokenEnum) {
 
     var value = type.value[0]
         private set

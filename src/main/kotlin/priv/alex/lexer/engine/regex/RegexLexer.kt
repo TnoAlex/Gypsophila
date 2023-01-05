@@ -3,17 +3,27 @@ package priv.alex.lexer.engine.regex
 class RegexLexer(private val pattern: String) {
 
     private var position: Int = 0
+    var currentToken:RegexToken = RegexToken(RegexTokenEnum.L)
+        private set
 
 
     fun advance(): RegexToken {
-        if (position > pattern.lastIndex)
-            return RegexToken(RegexTokenEnum.EOF)
+        if (position > pattern.lastIndex){
+            currentToken = RegexToken(RegexTokenEnum.EOF)
+            return currentToken
+        }
         return if (pattern[position] == '\\') {
             position += 1
-            handleEscape()
-        } else
-            RegexToken.getToken(pattern[position].toString())
+            currentToken = handleEscape()
+            currentToken
+        } else{
+            position+=1
+            currentToken = RegexToken.getToken(pattern[position-1].toString())
+            currentToken
+        }
+
     }
+
 
     private fun handleEscape(): RegexToken {
         val pos = position

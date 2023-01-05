@@ -1,7 +1,7 @@
 package priv.alex.lexer.engine.regex
 
-enum class RegexTokenEnum (var value: String) {
-    L(""),
+enum class RegexTokenEnum (val value: String) {
+    L(" "),
     ANY("."),
     AT_BOL("^"),
     AT_EOL("$"),
