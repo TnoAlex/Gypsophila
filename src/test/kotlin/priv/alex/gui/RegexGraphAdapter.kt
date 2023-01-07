@@ -21,7 +21,7 @@ class RegexGraphAdapter(graph: Graph<Int, RegexEdge>) :JFrame() {
                 .buildGraph()!!
         )
         val adapter = JGraphXAdapter(listenableGraph)
-        preferredSize = Dimension(520,320)
+        preferredSize = Dimension(960,620)
         val component =  mxGraphComponent(adapter)
         component.isConnectable = false
         component.graph.isAllowDanglingEdges = false

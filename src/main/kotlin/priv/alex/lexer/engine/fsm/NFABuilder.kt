@@ -39,11 +39,20 @@ class NFABuilder(pattern: String) {
 
 
     /**
-     * group ::= ("(" expr ")")*
+     * group ::= ("(" expr ")"*|+|?|)*
      */
 
     fun build(): Graph<Int, RegexEdge> {
         group()
+        val unreachable =ArrayList<Int>()
+        for (v in graph.vertexSet()){
+            if (graph.inDegreeOf(v) == 0 && v!=0){
+                unreachable.add(v)
+            }
+        }
+        unreachable.forEach{
+            graph.removeVertex(it)
+        }
         return graph
     }
 
@@ -51,10 +60,12 @@ class NFABuilder(pattern: String) {
         var token = lexer.advance()
         var utilEnd: Int
         var nextStart: Int
+        var pos:Pair<Int,Int> = Pair(0,0)
 
         if (token.type == OPEN_PAREN) {
             lexer.advance()
-            utilEnd = expression().second
+            pos = expression()
+            utilEnd = pos.second
             token = lexer.currentToken
             if (token.type == CLOSE_PAREN)
                token =  lexer.advance()
@@ -64,16 +75,17 @@ class NFABuilder(pattern: String) {
         }
 
         while (true) {
-            var utilRange: Pair<Int, Int>
             addNode()
             graph.addEdge(utilEnd,currentNode,RegexEdge(true))
             utilEnd = currentNode
-            if (lexer.currentToken.type == OPEN_PAREN) {
+            handleGroupClosure(pos)
+            token = lexer.currentToken
+            if (token.type == OPEN_PAREN) {
                 lexer.advance()
-                utilRange = expression()
-                nextStart = utilRange.first
+                pos = expression()
+                nextStart = pos.first
                 graph.addEdge(utilEnd, nextStart, RegexEdge(true))
-                utilEnd = utilRange.second
+                utilEnd = pos.second
                 token = lexer.advance()
                 if (token.type == CLOSE_PAREN) {
                     token = lexer.advance()
@@ -81,10 +93,32 @@ class NFABuilder(pattern: String) {
             } else if (token.type == EOF)
                 return
             else {
-                utilRange = expression()
-                nextStart = utilRange.first
+                pos = expression()
+                nextStart = pos.first
                 graph.addEdge(utilEnd, nextStart, RegexEdge(true))
-                utilEnd = utilRange.second
+                utilEnd = pos.second
+            }
+        }
+    }
+
+    private fun handleGroupClosure(pos:Pair<Int,Int>){
+        val token = lexer.currentToken
+        when (token.type) {
+            PLUS_CLOSE -> {
+                lexer.advance()
+                graph.addEdge(pos.second,pos.first, RegexEdge(true))
+            }
+            CLOSURE -> {
+                lexer.advance()
+                graph.addEdge(pos.second,pos.first, RegexEdge(true))
+                graph.addEdge(pos.first-1,pos.second+1, RegexEdge(true))
+            }
+            OPTIONAL -> {
+                lexer.advance()
+                graph.addEdge(pos.first-1,pos.second+1,RegexEdge(true))
+            }
+            else->{
+                return
             }
         }
     }
