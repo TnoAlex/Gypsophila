@@ -53,12 +53,15 @@ class NFABuilder(pattern: String) {
         var nextStart: Int
 
         if (token.type == OPEN_PAREN) {
+            lexer.advance()
             utilEnd = expression().second
             token = lexer.currentToken
             if (token.type == CLOSE_PAREN)
-                lexer.advance()
-        } else
+               token =  lexer.advance()
+        } else{
             utilEnd = expression().second
+            token = lexer.currentToken
+        }
 
         while (true) {
             var utilRange: Pair<Int, Int>
@@ -66,13 +69,14 @@ class NFABuilder(pattern: String) {
             graph.addEdge(utilEnd,currentNode,RegexEdge(true))
             utilEnd = currentNode
             if (lexer.currentToken.type == OPEN_PAREN) {
+                lexer.advance()
                 utilRange = expression()
                 nextStart = utilRange.first
                 graph.addEdge(utilEnd, nextStart, RegexEdge(true))
                 utilEnd = utilRange.second
                 token = lexer.advance()
                 if (token.type == CLOSE_PAREN) {
-                    lexer.advance()
+                    token = lexer.advance()
                 }
             } else if (token.type == EOF)
                 return
@@ -101,6 +105,7 @@ class NFABuilder(pattern: String) {
         var token = lexer.currentToken
         while (token.type == OR) {
             addNode()
+            lexer.advance()
             pos = factorConnection()
             graph.addEdge(bifurcate, pos.first, RegexEdge(true))
             graph.addEdge(pos.second, crossPos, RegexEdge(true))
@@ -117,12 +122,12 @@ class NFABuilder(pattern: String) {
         var utilsEnd = currentNode
         var utilStart = currentNode
 
-        var token = lexer.advance()
+        var token = lexer.currentToken
         if (isConnectable(token)) {
             val pos = factor()
             utilStart = pos.first
             utilsEnd = pos.second
-            token = lexer.advance()
+            token = lexer.currentToken
         }
         while (isConnectable(token)) {
             utilsEnd = factor().second
@@ -144,14 +149,17 @@ class NFABuilder(pattern: String) {
         } while (finishSignChar(token))
         return when (token.type) {
             CLOSURE -> {
+                lexer.advance()
                 matchStarClosure()
             }
 
             PLUS_CLOSE -> {
+                lexer.advance()
                 matchPlusClosure()
             }
 
             OPTIONAL -> {
+                lexer.advance()
                 matchQuestionClosure()
             }
 
@@ -162,7 +170,7 @@ class NFABuilder(pattern: String) {
     }
 
     private fun finishSignChar(token: RegexToken): Boolean {
-        val nc = listOf(CLOSURE, PLUS_CLOSE, OPTIONAL,CLOSE_PAREN,EOF)
+        val nc = listOf(CLOSURE, PLUS_CLOSE, OPTIONAL,CLOSE_PAREN,EOF,OPEN_PAREN,AT_EOL, EOF, CLOSURE, PLUS_CLOSE, CCL_END, AT_BOL, OR)
         return !nc.contains(token.type)
     }
 
