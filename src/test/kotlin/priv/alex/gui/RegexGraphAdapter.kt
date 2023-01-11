@@ -39,9 +39,9 @@ class RegexGraphAdapter(graph: Graph<Int, RegexEdge>) :JFrame() {
             }
             else if(e.cSet !=null && e.cChar == null){
                 if (e.invert){
-                    listenableGraph.addEdge(e.source,e.target,AdapterEdge("["+e.cSet!!.first()+","+e.cSet!!.last()+"]"))
+                    listenableGraph.addEdge(e.source,e.target,AdapterEdge("^["+e.cSet!!.last()+","+e.cSet!!.first()+"]"))
                 }else{
-                    listenableGraph.addEdge(e.source,e.target,AdapterEdge("["+e.cSet!!.first()+","+e.cSet!!.last()+"]"))
+                    listenableGraph.addEdge(e.source,e.target,AdapterEdge("["+e.cSet!!.last()+","+e.cSet!!.first()+"]"))
                 }
 
             }

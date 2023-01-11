@@ -3,7 +3,7 @@ package priv.alex.lexer.engine.fsm
 class DFA {
 
     fun buildDFA(regex: String): DFA {
-        val nfa = NFA().buildNFA(regex)
+        val nfa = NFA(regex)
         return parserDFA(nfa)
     }
 

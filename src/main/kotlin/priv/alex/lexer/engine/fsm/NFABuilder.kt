@@ -1,33 +1,18 @@
 package priv.alex.lexer.engine.fsm
 
 import org.jgrapht.Graph
-import org.jgrapht.graph.builder.GraphTypeBuilder
 import priv.alex.lexer.engine.regex.RegexLexer
 import priv.alex.lexer.engine.regex.RegexToken
 import priv.alex.lexer.engine.regex.RegexTokenEnum.*
 
 
-class NFABuilder(pattern: String) {
-
-    private val graph =
-        GraphTypeBuilder.directed<Int, RegexEdge>().allowingMultipleEdges(true).allowingSelfLoops(true).weighted(false)
-            .buildGraph()!!
+class NFABuilder(pattern: String) :FSMBuilder(){
 
     private val lexer = RegexLexer(pattern)
-
-    private var id = 0
-    private var currentNode = 0
 
     init {
         addNode()
     }
-
-    private fun addNode() {
-        graph.addVertex(id)
-        currentNode = id
-        id += 1
-    }
-
 
     /*
     group ::= ("(" expr ")")*
@@ -42,12 +27,19 @@ class NFABuilder(pattern: String) {
      * group ::= ("(" expr ")"*|+|?|)*
      */
 
-    fun build(): Graph<Int, RegexEdge> {
+    override fun build(): Graph<Int, RegexEdge> {
         group()
-        val unreachable =ArrayList<Int>()
+        val unreachable = HashSet<Int>()
         for (v in graph.vertexSet()){
             if (graph.inDegreeOf(v) == 0 && v!=0){
                 unreachable.add(v)
+                val edge = graph.edgesOf(v)
+                for(e in edge){
+                    if(graph.inDegreeOf(e.target) == 1) {
+                        unreachable.add(e.target)
+                        edge.addAll(graph.edgesOf(e.target))
+                    }
+                }
             }
         }
         unreachable.forEach{

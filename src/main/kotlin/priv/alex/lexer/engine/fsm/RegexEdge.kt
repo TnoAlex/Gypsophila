@@ -9,6 +9,7 @@ class RegexEdge(val cChar: Char?, val cSet: Set<Char>?) : DefaultEdge() {
     var invert: Boolean = false
         private set
 
+
     constructor(epsilon: Boolean) : this(null, null) {
         this.epsilon = epsilon
     }
