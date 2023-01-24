@@ -29,24 +29,7 @@ internal class NFABuilder(pattern: String) : FSMBuilder() {
 
     override fun build(): Graph<Int, RegexEdge> {
         group()
-        val unreachable = HashSet<Int>()
-        for (v in graph.vertexSet()) {
-            if (graph.inDegreeOf(v) == 0 && v != 0) {
-                unreachable.add(v)
-                val edge = graph.edgesOf(v).toMutableList()
-                while (edge.isNotEmpty()) {
-                    val e = edge.first()
-                    if (graph.inDegreeOf(e.target) == 1) {
-                        unreachable.add(e.target)
-                        edge.addAll(graph.outgoingEdgesOf(e.target))
-                    }
-                    edge.removeAt(0)
-                }
-            }
-        }
-        unreachable.forEach {
-            graph.removeVertex(it)
-        }
+        reachable()
         return graph
     }
 

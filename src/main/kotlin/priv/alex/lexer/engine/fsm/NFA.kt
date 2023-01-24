@@ -8,16 +8,17 @@ class NFA(regex: String) {
     val endPoint: Int
     val startPoint: Int = 0
 
+
     init {
         val builder = NFABuilder(regex)
         nfa = builder.build()
         endPoint = nfa.edgeSet().last().target
     }
 
-    fun epsilonClosure(status: Set<Int>): HashSet<Int> {
+    fun epsilonClosure(status: Set<Int>, graph:Graph<Int,RegexEdge> = this.nfa): HashSet<Int> {
         val set = HashSet<Int>()
         status.forEach {
-            val outEdge = nfa.outgoingEdgesOf(it)
+            val outEdge = graph.outgoingEdgesOf(it).toMutableSet()
             while (true) {
                 val vertex = HashSet<Int>()
                 outEdge.forEach { out ->
@@ -31,22 +32,23 @@ class NFA(regex: String) {
                     outEdge.clear()
                     val edge = HashSet<RegexEdge>()
                     vertex.forEach { v ->
-                        edge.addAll(nfa.outgoingEdgesOf(v))
+                        edge.addAll(graph.outgoingEdgesOf(v))
                     }
                     outEdge.addAll(edge)
                     set.addAll(vertex)
                 }
             }
         }
+        set.addAll(status)
         return set
     }
 
-    fun moveTo(status: Set<Int>): HashMap<Alphabet, MutableSet<Int>> {
+    fun moveTo(status: Set<Int>, graph:Graph<Int,RegexEdge> = this.nfa): HashMap<Alphabet, MutableSet<Int>> {
         val res = HashMap<Alphabet, MutableSet<Int>>()
         status.forEach {v->
-            val edge = nfa.outgoingEdgesOf(v).filter { e -> !e.epsilon }
+            val edge = graph.outgoingEdgesOf(v).filter { e -> !e.epsilon }
             edge.forEach{e->
-                res[Alphabet(e)]?:res.put(Alphabet(e), mutableSetOf(v))?.add(v)
+                res[Alphabet(e)]?:res.put(Alphabet(e), mutableSetOf(e.target))?.add(e.target)
             }
         }
         return res

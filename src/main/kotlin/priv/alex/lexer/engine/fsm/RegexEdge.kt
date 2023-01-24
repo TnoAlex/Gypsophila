@@ -16,6 +16,8 @@ class RegexEdge(val cChar: Char?, val cSet: Set<Char>?) : DefaultEdge() {
 
     constructor() : this(false)
 
+    constructor(edge: RegexEdge) : this(edge.cChar, edge.cSet, edge.invert)
+
     constructor(cChar: Char?, cSet: Set<Char>?, invert: Boolean?) : this(cChar, cSet) {
         if (invert != null)
             this.invert = invert
@@ -32,4 +34,30 @@ class RegexEdge(val cChar: Char?, val cSet: Set<Char>?) : DefaultEdge() {
     public override fun getTarget(): Int {
         return super.getTarget() as Int
     }
+
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as RegexEdge
+
+        if (cChar != other.cChar) return false
+        if (cSet != other.cSet) return false
+        if (epsilon != other.epsilon) return false
+        if (invert != other.invert) return false
+        if (source != other.source || target != other.target) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = cChar?.hashCode() ?: 0
+        result = 31 * result + (cSet?.hashCode() ?: 0)
+        result = 31 * result + epsilon.hashCode()
+        result = 31 * result + invert.hashCode()
+        return result
+    }
+
+
 }

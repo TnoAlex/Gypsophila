@@ -24,5 +24,6 @@ class Alphabet(edge: RegexEdge) {
         fun toEdge(alphabet: Alphabet): RegexEdge {
             return RegexEdge(alphabet.cChar,alphabet.cSet,alphabet.invert)
         }
+
     }
 }
