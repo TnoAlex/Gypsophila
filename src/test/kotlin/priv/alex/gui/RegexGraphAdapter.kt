@@ -32,7 +32,7 @@ class RegexGraphAdapter(graph: Graph<Int, RegexEdge>) :JFrame() {
         }
         for (e in graph.edgeSet()){
             if(e.epsilon){
-                listenableGraph.addEdge(e.source,e.target,AdapterEdge("E"))
+                listenableGraph.addEdge(e.source,e.target,AdapterEdge("Ep"))
             }
             else if(e.cSet == null && e.cChar == null){
                 listenableGraph.addEdge(e.source,e.target,AdapterEdge("Any"))

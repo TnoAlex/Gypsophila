@@ -7,7 +7,7 @@ class TokenFactory(val identify: String, private val regex: String) {
 
     private val factoryId: String = UUID.randomUUID().toString()
 
-    private val dfa: DFA = DFA().buildDFA(regex)
+    private val dfa: DFA = DFA(regex)
 
     fun buildToken(rawCode: String): ArrayList<Token> {
         val identifiedToken = ArrayList<Token>()

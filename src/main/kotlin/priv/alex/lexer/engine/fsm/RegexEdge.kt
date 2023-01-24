@@ -16,6 +16,11 @@ class RegexEdge(val cChar: Char?, val cSet: Set<Char>?) : DefaultEdge() {
 
     constructor() : this(false)
 
+    constructor(cChar: Char?, cSet: Set<Char>?, invert: Boolean?) : this(cChar, cSet) {
+        if (invert != null)
+            this.invert = invert
+    }
+
     constructor(invert: Boolean, cSet: Set<Char>) : this(null, cSet) {
         this.invert = invert
     }

@@ -3,7 +3,7 @@ package priv.alex.lexer.engine.fsm
 import org.jgrapht.Graph
 import org.jgrapht.graph.builder.GraphTypeBuilder
 
-abstract class FSMBuilder {
+internal abstract class FSMBuilder {
 
     protected val graph =
         GraphTypeBuilder.directed<Int, RegexEdge>().allowingMultipleEdges(true).allowingSelfLoops(true).weighted(false)

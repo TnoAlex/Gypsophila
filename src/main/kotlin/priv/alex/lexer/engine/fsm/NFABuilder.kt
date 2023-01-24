@@ -6,7 +6,7 @@ import priv.alex.lexer.engine.regex.RegexToken
 import priv.alex.lexer.engine.regex.RegexTokenEnum.*
 
 
-class NFABuilder(pattern: String) :FSMBuilder(){
+internal class NFABuilder(pattern: String) : FSMBuilder() {
 
     private val lexer = RegexLexer(pattern)
 
@@ -30,19 +30,21 @@ class NFABuilder(pattern: String) :FSMBuilder(){
     override fun build(): Graph<Int, RegexEdge> {
         group()
         val unreachable = HashSet<Int>()
-        for (v in graph.vertexSet()){
-            if (graph.inDegreeOf(v) == 0 && v!=0){
+        for (v in graph.vertexSet()) {
+            if (graph.inDegreeOf(v) == 0 && v != 0) {
                 unreachable.add(v)
-                val edge = graph.edgesOf(v)
-                for(e in edge){
-                    if(graph.inDegreeOf(e.target) == 1) {
+                val edge = graph.edgesOf(v).toMutableList()
+                while (edge.isNotEmpty()) {
+                    val e = edge.first()
+                    if (graph.inDegreeOf(e.target) == 1) {
                         unreachable.add(e.target)
-                        edge.addAll(graph.edgesOf(e.target))
+                        edge.addAll(graph.outgoingEdgesOf(e.target))
                     }
+                    edge.removeAt(0)
                 }
             }
         }
-        unreachable.forEach{
+        unreachable.forEach {
             graph.removeVertex(it)
         }
         return graph
@@ -52,7 +54,7 @@ class NFABuilder(pattern: String) :FSMBuilder(){
         var token = lexer.advance()
         var utilEnd: Int
         var nextStart: Int
-        var pos:Pair<Int,Int> = Pair(0,0)
+        var pos: Pair<Int, Int> = Pair(0, 0)
 
         if (token.type == OPEN_PAREN) {
             lexer.advance()
@@ -60,15 +62,15 @@ class NFABuilder(pattern: String) :FSMBuilder(){
             utilEnd = pos.second
             token = lexer.currentToken
             if (token.type == CLOSE_PAREN)
-               token =  lexer.advance()
-        } else{
+                token = lexer.advance()
+        } else {
             utilEnd = expression().second
             token = lexer.currentToken
         }
 
         while (true) {
             addNode()
-            graph.addEdge(utilEnd,currentNode,RegexEdge(true))
+            graph.addEdge(utilEnd, currentNode, RegexEdge(true))
             utilEnd = currentNode
             handleGroupClosure(pos)
             token = lexer.currentToken
@@ -93,23 +95,26 @@ class NFABuilder(pattern: String) :FSMBuilder(){
         }
     }
 
-    private fun handleGroupClosure(pos:Pair<Int,Int>){
+    private fun handleGroupClosure(pos: Pair<Int, Int>) {
         val token = lexer.currentToken
         when (token.type) {
             PLUS_CLOSE -> {
                 lexer.advance()
-                graph.addEdge(pos.second,pos.first, RegexEdge(true))
+                graph.addEdge(pos.second, pos.first, RegexEdge(true))
             }
+
             CLOSURE -> {
                 lexer.advance()
-                graph.addEdge(pos.second,pos.first, RegexEdge(true))
-                graph.addEdge(pos.first-1,pos.second+1, RegexEdge(true))
+                graph.addEdge(graph.incomingEdgesOf(pos.first).first().source,graph.outgoingEdgesOf(pos.second).first().target, RegexEdge(true))
+                graph.addEdge(pos.second, pos.first, RegexEdge(true))
             }
+
             OPTIONAL -> {
                 lexer.advance()
-                graph.addEdge(pos.first-1,pos.second+1,RegexEdge(true))
+                graph.addEdge(graph.incomingEdgesOf(pos.first).first().source,graph.outgoingEdgesOf(pos.second).first().target, RegexEdge(true))
             }
-            else->{
+
+            else -> {
                 return
             }
         }
@@ -146,12 +151,11 @@ class NFABuilder(pattern: String) :FSMBuilder(){
      */
     private fun factorConnection(): Pair<Int, Int> {
         var utilsEnd = currentNode
-        var utilStart = currentNode
+        val utilStart = currentNode
 
         var token = lexer.currentToken
         if (isConnectable(token)) {
             val pos = factor()
-            utilStart = pos.first
             utilsEnd = pos.second
             token = lexer.currentToken
         }
@@ -196,7 +200,21 @@ class NFABuilder(pattern: String) :FSMBuilder(){
     }
 
     private fun finishSignChar(token: RegexToken): Boolean {
-        val nc = listOf(CLOSURE, PLUS_CLOSE, OPTIONAL,CLOSE_PAREN,EOF,OPEN_PAREN,AT_EOL, EOF, CLOSURE, PLUS_CLOSE, CCL_END, AT_BOL, OR)
+        val nc = listOf(
+            CLOSURE,
+            PLUS_CLOSE,
+            OPTIONAL,
+            CLOSE_PAREN,
+            EOF,
+            OPEN_PAREN,
+            AT_EOL,
+            EOF,
+            CLOSURE,
+            PLUS_CLOSE,
+            CCL_END,
+            AT_BOL,
+            OR
+        )
         return !nc.contains(token.type)
     }
 

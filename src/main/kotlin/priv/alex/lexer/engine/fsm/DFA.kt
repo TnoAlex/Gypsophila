@@ -1,14 +1,18 @@
 package priv.alex.lexer.engine.fsm
 
-class DFA {
+import org.jgrapht.Graph
 
-    fun buildDFA(regex: String): DFA {
+class DFA(regex: String) {
+
+    val dfa: Graph<Int, RegexEdge>
+    private val startPoint = 0
+    private val endPoint = HashSet<Int>()
+
+    init {
         val nfa = NFA(regex)
-        return parserDFA(nfa)
-    }
-
-    private fun parserDFA(nfa: NFA): DFA {
-        return DFA()
+        val builder = DFABuilder(nfa)
+        dfa = builder.build()
+        builder.nodeMap.filter { it.key.contains(nfa.endPoint) }.forEach { (_, v) -> endPoint.add(v) }
     }
 
 }
