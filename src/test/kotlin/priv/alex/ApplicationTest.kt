@@ -1,5 +1,6 @@
-package priv.alex.gui
+package priv.alex
 
+import priv.alex.gui.RegexGraphAdapter
 import priv.alex.lexer.engine.fsm.DFABuilder
 import priv.alex.lexer.engine.fsm.NFA
 import priv.alex.lexer.engine.fsm.NFABuilder
@@ -7,7 +8,7 @@ import javax.swing.JFrame
 
 fun main(){
 //    nfaBuilderTest()
-    val nfa  = NFA("abc|bc|ad")
+    val nfa  = NFA("a(b|c)*")
     val builder = DFABuilder(nfa)
     val jFrame = RegexGraphAdapter(builder.build())
     jFrame.defaultCloseOperation = JFrame.EXIT_ON_CLOSE

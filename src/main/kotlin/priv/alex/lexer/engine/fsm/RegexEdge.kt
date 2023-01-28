@@ -16,11 +16,12 @@ class RegexEdge(val cChar: Char?, val cSet: Set<Char>?) : DefaultEdge() {
 
     constructor() : this(false)
 
-    constructor(edge: RegexEdge) : this(edge.cChar, edge.cSet, edge.invert)
+    constructor(edge: RegexEdge) : this(edge.cChar, edge.cSet, edge.invert, edge.epsilon)
 
-    constructor(cChar: Char?, cSet: Set<Char>?, invert: Boolean?) : this(cChar, cSet) {
+    constructor(cChar: Char?, cSet: Set<Char>?, invert: Boolean?, epsilon: Boolean) : this(cChar, cSet) {
         if (invert != null)
             this.invert = invert
+        this.epsilon = epsilon
     }
 
     constructor(invert: Boolean, cSet: Set<Char>) : this(null, cSet) {
@@ -33,6 +34,14 @@ class RegexEdge(val cChar: Char?, val cSet: Set<Char>?) : DefaultEdge() {
 
     public override fun getTarget(): Int {
         return super.getTarget() as Int
+    }
+
+    fun sameCondition(other: RegexEdge): Boolean {
+        if (cChar != other.cChar) return false
+        if (cSet != other.cSet) return false
+        if (epsilon != other.epsilon) return false
+        if (invert != other.invert) return false
+        return true
     }
 
 

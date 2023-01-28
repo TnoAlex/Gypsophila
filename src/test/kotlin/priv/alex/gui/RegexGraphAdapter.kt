@@ -2,6 +2,7 @@ package priv.alex.gui
 
 import com.mxgraph.layout.mxFastOrganicLayout
 import com.mxgraph.swing.mxGraphComponent
+import com.mxgraph.util.mxConstants
 import org.jgrapht.Graph
 import org.jgrapht.ext.JGraphXAdapter
 import org.jgrapht.graph.DefaultListenableGraph
@@ -21,6 +22,15 @@ class RegexGraphAdapter(graph: Graph<Int, RegexEdge>) :JFrame() {
                 .buildGraph()!!
         )
         val adapter = JGraphXAdapter(listenableGraph)
+        val style = adapter.stylesheet.defaultEdgeStyle
+        style[mxConstants.STYLE_EDGE] = mxConstants.EDGESTYLE_ELBOW
+        style[mxConstants.STYLE_EDGE] = mxConstants.STYLE_LOOP
+        style[mxConstants.STYLE_EDGE] = mxConstants.EDGESTYLE_SIDETOSIDE
+        style[mxConstants.STYLE_EDGE] = mxConstants.EDGESTYLE_TOPTOBOTTOM
+        style[mxConstants.STYLE_EDGE] = mxConstants.EDGESTYLE_ORTHOGONAL
+        style[mxConstants.STYLE_EDGE] = mxConstants.EDGESTYLE_SEGMENT
+        style[mxConstants.STYLE_EDGE] = mxConstants.EDGESTYLE_ENTITY_RELATION
+
         preferredSize = Dimension(960,620)
         val component =  mxGraphComponent(adapter)
         component.isConnectable = false

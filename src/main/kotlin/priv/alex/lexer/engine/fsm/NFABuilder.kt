@@ -6,7 +6,7 @@ import priv.alex.lexer.engine.regex.RegexToken
 import priv.alex.lexer.engine.regex.RegexTokenEnum.*
 
 
-internal class NFABuilder(pattern: String) : FSMBuilder() {
+internal class NFABuilder(pattern: String) : FABuilder() {
 
     private val lexer = RegexLexer(pattern)
 
@@ -32,6 +32,7 @@ internal class NFABuilder(pattern: String) : FSMBuilder() {
         reachable()
         return graph
     }
+
 
     private fun group() {
         var token = lexer.advance()

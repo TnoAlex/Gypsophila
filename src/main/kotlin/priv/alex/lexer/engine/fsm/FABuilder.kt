@@ -3,7 +3,7 @@ package priv.alex.lexer.engine.fsm
 import org.jgrapht.Graph
 import org.jgrapht.graph.builder.GraphTypeBuilder
 
-internal abstract class FSMBuilder {
+internal abstract class FABuilder {
 
     protected val graph =
         GraphTypeBuilder.directed<Int, RegexEdge>().allowingMultipleEdges(true).allowingSelfLoops(true).weighted(false)
@@ -13,7 +13,7 @@ internal abstract class FSMBuilder {
     protected var currentNode = 0
         private set
 
-    protected fun clear() {
+    protected fun clearGraph() {
         graph.removeAllVertices(graph.vertexSet().toMutableList())
         id = 0
         currentNode = 0
@@ -26,18 +26,6 @@ internal abstract class FSMBuilder {
     }
 
     abstract fun build(): Graph<Int, RegexEdge>
-
-    protected fun reverse(endPoint: Set<Int>) {
-        val edge = graph.edgeSet().toMutableList()
-        graph.removeAllEdges(edge)
-        edge.forEach {
-            graph.addEdge(it.target, it.source, RegexEdge(it))
-        }
-        addNode()
-        endPoint.forEach {
-            graph.addEdge(currentNode, it, RegexEdge(true))
-        }
-    }
 
     protected fun reachable() {
         val unreachable = HashSet<Int>()
@@ -60,7 +48,7 @@ internal abstract class FSMBuilder {
         }
     }
 
-    protected fun clone(): Graph<Int, RegexEdge> {
+    protected fun cloneGraph(): Graph<Int, RegexEdge> {
         val newGraph = GraphTypeBuilder.directed<Int, RegexEdge>().allowingMultipleEdges(true).allowingSelfLoops(true)
             .weighted(false)
             .buildGraph()!!
@@ -73,5 +61,6 @@ internal abstract class FSMBuilder {
         }
         return newGraph
     }
+
 
 }

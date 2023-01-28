@@ -4,7 +4,7 @@ import org.jgrapht.Graph
 
 class DFA(regex: String) {
 
-    val dfa: Graph<Int, RegexEdge>
+    private val dfa: Graph<Int, RegexEdge>
     private val startPoint = 0
     private val endPoint:HashSet<Int>
 
@@ -14,5 +14,7 @@ class DFA(regex: String) {
         dfa = builder.build()
         endPoint = builder.endPoint
     }
+
+
 
 }

@@ -3,11 +3,10 @@ package priv.alex.lexer.engine.fsm
 import org.jgrapht.Graph
 
 
-internal class DFABuilder(private val nfa: NFA) : FSMBuilder() {
+internal class DFABuilder(private val nfa: NFA) : FABuilder() {
 
     private val nodeMap = HashMap<Set<Int>, Int>()
     val endPoint = HashSet<Int>()
-    private var startPoint = 0
 
     init {
         addNode()
@@ -15,30 +14,21 @@ internal class DFABuilder(private val nfa: NFA) : FSMBuilder() {
 
     override fun build(): Graph<Int, RegexEdge> {
         deterministic()
-        genEndPoint()
-        minimize()
-        genEndPoint()
-        reachable()
+        nodeMap.filter { it.key.containsAny(setOf(nfa.endPoint)) }.forEach { (_, v) -> endPoint.add(v) }
         return graph
     }
 
-    private fun genEndPoint() {
-        nodeMap.filter { it.key.contains(nfa.endPoint) }.forEach { (_, v) -> endPoint.add(v) }
+    private fun <E> Set<E>.containsAny(collection: Collection<E>): Boolean {
+        collection.forEach {
+            if (contains(it))
+                return true
+        }
+        return false
     }
 
-
-    private fun deterministic(flag: Boolean = false) {
+    private fun deterministic() {
         val stateSet = HashMap<Set<Int>, Boolean>()
-
-        val rawStatus:MutableList<HashSet<Int>> = if (flag){
-            val oldDFA = clone()
-            clear()
-            addNode()
-            mutableListOf(nfa.epsilonClosure(setOf(startPoint),oldDFA))
-        }
-
-        else
-            mutableListOf(nfa.epsilonClosure(setOf(startPoint)))
+        val rawStatus: MutableList<HashSet<Int>> = mutableListOf(nfa.epsilonClosure(setOf(nfa.startPoint)))
 
         var moveStatus = HashMap<Alphabet, MutableSet<Int>>()
         stateSet[rawStatus.first()] = false
@@ -73,18 +63,25 @@ internal class DFABuilder(private val nfa: NFA) : FSMBuilder() {
             }
             moveStatus.remove(usingKey)
         }
-    }
 
-    private fun minimize() {
-        reverse(endPoint)
-        startPoint = currentNode
-        endPoint.clear()
-        deterministic(true)
-        genEndPoint()
-        reverse(endPoint)
-        startPoint = currentNode
-        endPoint.clear()
-        deterministic(true)
+        graph.vertexSet().forEach {v->
+            val edge = graph.outgoingEdgesOf(v)
+            val margeEdge = HashSet<RegexEdge>()
+            edge.forEach edgeLoop@{e->
+                if (margeEdge.contains(e))
+                    return@edgeLoop
+                edge.filter { e.sameCondition(it) && e.target !=it.target }.forEach { s->
+                    val sTarget = graph.outgoingEdgesOf(s.target)
+                    sTarget.forEach {
+                        graph.addEdge(e.target,it.target,RegexEdge(it))
+                        margeEdge.add(it)
+                    }
+                    margeEdge.add(s)
+                }
+            }
+           margeEdge.forEach { graph.removeEdge(it)}
+        }
+        graph.vertexSet().filter { graph.degreeOf(it) == 0 }.forEach { graph.removeVertex(it) }
     }
 
 }
