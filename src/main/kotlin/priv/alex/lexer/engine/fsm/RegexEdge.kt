@@ -28,6 +28,15 @@ class RegexEdge(val cChar: Char?, val cSet: Set<Char>?) : DefaultEdge() {
         this.invert = invert
     }
 
+    fun match(c: Char): Boolean {
+        return if (cChar != null && c == cChar)
+            true
+        else if (cSet != null && !invert && cSet.contains(c))
+            true
+        else cSet != null && invert && !cSet.contains(c)
+    }
+
+
     public override fun getSource(): Int {
         return super.getSource() as Int
     }

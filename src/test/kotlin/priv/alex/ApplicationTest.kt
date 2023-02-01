@@ -8,7 +8,7 @@ import javax.swing.JFrame
 
 fun main(){
 //    nfaBuilderTest()
-    val nfa  = NFA("a(b|c)*")
+    val nfa  = NFA("a([a-z])*")
     val builder = DFABuilder(nfa)
     val jFrame = RegexGraphAdapter(builder.build())
     jFrame.defaultCloseOperation = JFrame.EXIT_ON_CLOSE
@@ -17,7 +17,7 @@ fun main(){
 }
 
 private fun nfaBuilderTest(){
-    val builder = NFABuilder("abc|bc|ad")
+    val builder = NFABuilder("a([a-z])*")
     val jFrame = RegexGraphAdapter(builder.build())
     jFrame.defaultCloseOperation = JFrame.EXIT_ON_CLOSE
     jFrame.pack()

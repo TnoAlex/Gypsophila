@@ -14,16 +14,6 @@ class Alphabet(edge: RegexEdge) {
     }
     constructor():this(RegexEdge(false))
 
-    fun match(edge: RegexEdge): Boolean {
-        return if (edge.epsilon == this.epsilon)
-            true
-        else if (edge.cChar ==null && edge.cSet==null && cChar == null &&cSet ==null )
-            true
-        else if (edge.cChar != null) {
-            edge.cChar == cChar
-        } else
-            edge.cSet == cSet && edge.invert == invert
-    }
     companion object {
         fun toEdge(alphabet: Alphabet): RegexEdge {
             return RegexEdge(alphabet.cChar,alphabet.cSet,alphabet.invert,alphabet.epsilon)

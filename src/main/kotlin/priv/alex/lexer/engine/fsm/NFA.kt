@@ -1,6 +1,7 @@
 package priv.alex.lexer.engine.fsm
 
 import org.jgrapht.Graph
+import java.io.Serializable
 
 class NFA(regex: String) {
 
