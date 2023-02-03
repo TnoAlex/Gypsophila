@@ -1,16 +1,19 @@
 package priv.alex.lexer.engine.fsm
 
 import org.jgrapht.Graph
-import priv.alex.annotation.NoArg
+import priv.alex.log.Logger
+import priv.alex.log.Logger.Companion.log
+import priv.alex.noarg.NoArg
 import java.io.Serializable
 import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.full.createInstance
 import kotlin.reflect.full.declaredMemberProperties
 
 @NoArg
+@Logger
 class DFA(val pattern: String) : Cloneable, Serializable {
 
-    private val dfa: Graph<Int, RegexEdge>
+    val dfa: Graph<Int, RegexEdge>
     private val startPoint = 0
     private val endPoint: HashSet<Int>
 
@@ -20,6 +23,10 @@ class DFA(val pattern: String) : Cloneable, Serializable {
         val builder = DFABuilder(nfa)
         dfa = builder.build()
         endPoint = builder.endPoint
+        log.info("测试")
+        log.error("测试")
+        log.warn("测试")
+        log.debug("测试")
     }
 
 

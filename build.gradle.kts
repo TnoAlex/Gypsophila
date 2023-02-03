@@ -15,7 +15,7 @@ repositories {
 java.sourceCompatibility = JavaVersion.VERSION_11
 
 noArg {
-    annotation("priv.alex.annotation.NoArg")
+    annotation("priv.alex.noarg.NoArg")
     invokeInitializers = true
 }
 dependencies {
@@ -24,7 +24,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.8.0")
     implementation("org.jgrapht:jgrapht-core:1.5.1")
     implementation("com.github.ajalt.clikt:clikt:3.5.1")
-    implementation("org.apache.commons:commons-collections4:4.4")
+    implementation("ch.qos.logback:logback-classic:1.4.5")
     testImplementation("com.github.vlsi.mxgraph:jgraphx:4.2.2")
     testImplementation("org.jgrapht:jgrapht-ext:1.5.1")
 }
