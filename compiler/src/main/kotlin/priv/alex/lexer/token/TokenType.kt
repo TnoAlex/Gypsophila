@@ -8,17 +8,17 @@ enum class TokenType {
     IDENTIFIER,
     OPERATOR,
     LITERAL,
-    SPECIAL_CHAR;
-
-
+    SEPARATOR,
+    QUALIFIER;
     companion object {
-        fun valueOf(str: String): TokenType {
+        fun valuesOf(str: String): TokenType {
             return when (str) {
                 "Keywords" -> KEYWORDS
                 "Identifier" -> IDENTIFIER
                 "Operator" -> OPERATOR
                 "Literal" -> LITERAL
-                "Special Char" -> SPECIAL_CHAR
+                "Qualifier" -> QUALIFIER
+                "Separator" -> SEPARATOR
                 else-> {
                     log.info("Incomprehensible Token")
                     throw RuntimeException("Incomprehensible Token")

@@ -30,7 +30,6 @@ dependencies {
     implementation("ch.qos.logback:logback-classic:1.4.5")
     implementation(project(":klogger"))
     ksp(project(":klogger"))
-
     testImplementation("com.github.vlsi.mxgraph:jgraphx:4.2.2")
     testImplementation("org.jgrapht:jgrapht-ext:1.5.1")
 }

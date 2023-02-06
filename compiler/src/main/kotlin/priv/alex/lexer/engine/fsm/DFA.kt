@@ -13,7 +13,7 @@ import kotlin.reflect.full.declaredMemberProperties
 class DFA(val pattern: String) : Cloneable, Serializable {
 
 
-    val dfa: Graph<Int, RegexEdge>
+    private val dfa: Graph<Int, RegexEdge>
     private val startPoint = 0
     private val endPoint: HashSet<Int>
 
@@ -23,10 +23,6 @@ class DFA(val pattern: String) : Cloneable, Serializable {
         val builder = DFABuilder(nfa)
         dfa = builder.build()
         endPoint = builder.endPoint
-        log.info("测试")
-        log.error("测试")
-        log.warn("测试")
-        log.debug("测试")
     }
 
 
