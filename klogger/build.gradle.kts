@@ -1,26 +1,26 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.8.0"
+    kotlin("jvm")
 }
 
 group = "priv.alex"
 version = "1.0-SNAPSHOT"
 
+
 repositories {
     mavenCentral()
-}
-buildscript {
-    dependencies {
-        classpath(kotlin("gradle-plugin", version = "1.8.0"))
-    }
 }
 
 java.sourceCompatibility = JavaVersion.VERSION_11
 
 
+
 dependencies {
     testImplementation(kotlin("test"))
+    implementation("com.google.devtools.ksp:symbol-processing-api:1.8.0-1.0.9")
+    implementation("ch.qos.logback:logback-classic:1.4.5")
+    implementation("com.squareup:kotlinpoet-ksp:1.12.0")
 }
 
 
