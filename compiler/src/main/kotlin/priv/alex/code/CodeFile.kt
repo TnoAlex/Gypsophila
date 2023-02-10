@@ -6,15 +6,13 @@ import java.io.File
 import java.io.IOException
 
 @Logger
-class CodeFile(filePath: String) {
+class CodeFile(private val file: File) {
 
     val fileName: String
     val lines: ArrayList<CodeLine>
-    private val file: File
 
     init {
         try {
-            file = File(filePath)
             fileName = file.name
         } catch (e: IOException) {
             log.error("File access failed")
@@ -22,7 +20,7 @@ class CodeFile(filePath: String) {
         }
         log.info("Loading Source Code <- $fileName")
         lines = CodeReader(file).readLines()
-        log.info("Done")
+        log.info("Done -> $fileName")
     }
 
 }

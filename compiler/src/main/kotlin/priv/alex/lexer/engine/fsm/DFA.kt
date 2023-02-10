@@ -12,8 +12,14 @@ import kotlin.reflect.full.declaredMemberProperties
 @Logger
 class DFA(val pattern: String) : Cloneable, Serializable {
 
+    enum class DFAStatus{
+        ACCEPT,
+        REFUSE,
+        INCOMPLETE
+    }
 
-    private val dfa: Graph<Int, RegexEdge>
+
+     val dfa: Graph<Int, RegexEdge>
     private val startPoint = 0
     private val endPoint: HashSet<Int>
 
@@ -26,18 +32,26 @@ class DFA(val pattern: String) : Cloneable, Serializable {
     }
 
 
-    fun match(str: String): Boolean {
+    fun match(str: String): DFAStatus {
         var currentNode = startPoint
         str.forEach {c->
             val edge = dfa.outgoingEdgesOf(currentNode)
             edge.filter { it.match(c) }.let {
-                if (it.isEmpty()) return false
+                if (it.isEmpty()) return DFAStatus.REFUSE
                 else{
-                    currentNode = it.first().target
+                    // 优先匹配单字符
+                    currentNode = if (it.none { e -> e.cChar != null })
+                        it.first().target
+                    else{
+                        it.first{e-> e.cChar!=null}.target
+                    }
                 }
             }
         }
-        return endPoint.contains(currentNode)
+        return if (endPoint.contains(currentNode))
+            DFAStatus.ACCEPT
+        else
+            DFAStatus.INCOMPLETE
     }
 
     override fun clone(): DFA {

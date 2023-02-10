@@ -5,7 +5,7 @@ import org.jgrapht.Graph
 
 internal class DFABuilder(private val nfa: NFA) : FABuilder() {
 
-    private val nodeMap = HashMap<Set<Int>, Int>()
+    private val nodeMap = HashMap<HashSet<Int>, Int>()
     val endPoint = HashSet<Int>()
 
     init {
@@ -81,7 +81,10 @@ internal class DFABuilder(private val nfa: NFA) : FABuilder() {
             }
            margeEdge.forEach { graph.removeEdge(it)}
         }
-        graph.vertexSet().filter { graph.degreeOf(it) == 0 }.forEach { graph.removeVertex(it) }
+        graph.vertexSet().filter { graph.degreeOf(it) == 0 }.forEach {
+            nodeMap.filter { m->m.key.contains(it) }.forEach { v-> v.key.remove(it) }
+            graph.removeVertex(it)
+        }
     }
 
 }

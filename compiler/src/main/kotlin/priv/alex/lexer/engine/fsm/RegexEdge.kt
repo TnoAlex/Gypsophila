@@ -29,7 +29,9 @@ class RegexEdge(val cChar: Char?, val cSet: Set<Char>?) : DefaultEdge() {
     }
 
     fun match(c: Char): Boolean {
-        return if (cChar != null && c == cChar)
+        return if (cChar == null && cSet == null)
+            true
+        else if (cChar != null && c == cChar)
             true
         else if (cSet != null && !invert && cSet.contains(c))
             true
