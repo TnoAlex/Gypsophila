@@ -15,6 +15,9 @@ data class CodeLine(val position: Int, val content: String) {
                 }
 
             }
+            if (content[i] == ' ' && t.isEmpty()){
+                i++
+            }
             if (content[i] == ' ' && t.isNotEmpty()){
                 words.add(t.toString().trim())
                 t.clear()

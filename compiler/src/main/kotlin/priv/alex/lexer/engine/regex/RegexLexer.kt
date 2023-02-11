@@ -8,10 +8,13 @@ class RegexLexer(private val pattern: String) {
 
 
     fun advance(): RegexToken {
-        if (position > pattern.lastIndex){
+        if (position == pattern.lastIndex){
             currentToken = RegexToken(RegexTokenEnum.EOF)
+            position++
             return currentToken
         }
+        if(position > pattern.lastIndex)
+            throw RuntimeException("The pointer is out of bounds but the NFA build is not complete, there may be a problem with this regularity: $pattern")
         return if (pattern[position] == '\\') {
             position += 1
             currentToken = handleEscape()

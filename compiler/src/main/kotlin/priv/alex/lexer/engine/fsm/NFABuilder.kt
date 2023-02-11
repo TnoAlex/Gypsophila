@@ -40,30 +40,56 @@ internal class NFABuilder(pattern: String) : FABuilder() {
         var nextStart: Int
         var pos: Pair<Int, Int> = Pair(0, 0)
 
+        addNode()
+        val crossPos = currentNode
+        addNode()
+        val bifurcate = currentNode
+        graph.addEdge(currentNode-2,bifurcate, RegexEdge(true))
+
         if (token.type == OPEN_PAREN) {
             lexer.advance()
-            pos = expression()
-            utilEnd = pos.second
+            pos = expression(bifurcate)
+            graph.addEdge(pos.second,crossPos, RegexEdge(true))
+            utilEnd = crossPos
             token = lexer.currentToken
             if (token.type == CLOSE_PAREN)
                 token = lexer.advance()
         } else {
-            utilEnd = expression().second
+            utilEnd = expression(bifurcate).second
+            graph.addEdge(utilEnd,crossPos,RegexEdge(true))
+            utilEnd = crossPos
             token = lexer.currentToken
         }
 
         while (true) {
-            addNode()
-            graph.addEdge(utilEnd, currentNode, RegexEdge(true))
-            utilEnd = currentNode
-            handleGroupClosure(pos)
-            token = lexer.currentToken
+            var branchFlag = false
+
+            if (token.type == OR){
+                branchFlag = true
+                token = lexer.advance()
+            }else{
+                addNode()
+                graph.addEdge(utilEnd, currentNode, RegexEdge(true))
+                utilEnd = currentNode
+                handleGroupClosure(pos)
+                token = lexer.currentToken
+            }
+
             if (token.type == OPEN_PAREN) {
                 lexer.advance()
-                pos = expression()
-                nextStart = pos.first
-                graph.addEdge(utilEnd, nextStart, RegexEdge(true))
-                utilEnd = pos.second
+                if (!branchFlag){
+                    pos = expression(utilEnd)
+                    nextStart = pos.first
+                    graph.addEdge(utilEnd, nextStart, RegexEdge(true))
+                    utilEnd = pos.second
+                }else{
+                    pos = expression(bifurcate)
+                    nextStart = pos.first
+                    graph.addEdge(bifurcate,nextStart, RegexEdge(true))
+                    graph.addEdge(pos.second,crossPos,RegexEdge(true))
+                    nextStart = bifurcate
+                    utilEnd = crossPos
+                }
                 token = lexer.advance()
                 if (token.type == CLOSE_PAREN) {
                     token = lexer.advance()
@@ -71,10 +97,21 @@ internal class NFABuilder(pattern: String) : FABuilder() {
             } else if (token.type == EOF)
                 return
             else {
-                pos = expression()
-                nextStart = pos.first
-                graph.addEdge(utilEnd, nextStart, RegexEdge(true))
-                utilEnd = pos.second
+                if(token.type == CLOSE_PAREN)
+                    throw  RuntimeException("The parentheses cannot be matched")
+                if (!branchFlag){
+                    pos = expression(utilEnd)
+                    nextStart = pos.first
+                    graph.addEdge(utilEnd, nextStart, RegexEdge(true))
+                    utilEnd = pos.second
+                }else{
+                    pos = expression(bifurcate)
+                    nextStart = pos.first
+                    graph.addEdge(bifurcate,nextStart, RegexEdge(true))
+                    graph.addEdge(pos.second,crossPos,RegexEdge(true))
+                    utilEnd = crossPos
+                    nextStart = bifurcate
+                }
             }
         }
     }
@@ -108,13 +145,12 @@ internal class NFABuilder(pattern: String) : FABuilder() {
      *  expr ::= factor_conn ("|" factor_conn)*
      */
 
-    private fun expression(): Pair<Int, Int> {
+    private fun expression(startPos:Int): Pair<Int, Int> {
         addNode()
         val crossPos = currentNode
         addNode()
-        val utilStart = currentNode
         val bifurcate = currentNode
-        graph.addEdge(currentNode - 2, bifurcate, RegexEdge(true))
+        graph.addEdge(startPos, bifurcate, RegexEdge(true))
         var pos = factorConnection()
         graph.addEdge(pos.second, crossPos, RegexEdge(true))
         var token = lexer.currentToken
@@ -126,7 +162,7 @@ internal class NFABuilder(pattern: String) : FABuilder() {
             graph.addEdge(pos.second, crossPos, RegexEdge(true))
             token = lexer.currentToken
         }
-        return Pair(utilStart, crossPos)
+        return Pair(bifurcate, crossPos)
     }
 
     /*
