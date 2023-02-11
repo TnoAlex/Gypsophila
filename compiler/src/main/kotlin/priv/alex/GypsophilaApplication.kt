@@ -1,13 +1,16 @@
 package priv.alex
 
-import com.github.ajalt.clikt.core.*
+import com.github.ajalt.clikt.core.CliktCommand
+import com.github.ajalt.clikt.core.PrintMessage
+import com.github.ajalt.clikt.core.subcommands
 import com.github.ajalt.clikt.parameters.groups.OptionGroup
 import com.github.ajalt.clikt.parameters.groups.cooccurring
 import com.github.ajalt.clikt.parameters.options.*
-import priv.alex.cli.LexerCommand
-import priv.alex.cli.ParserCommand
 import com.github.ajalt.clikt.parameters.types.file
 import com.github.ajalt.clikt.parameters.types.int
+import priv.alex.cli.LexerCommand
+import priv.alex.cli.ParserCommand
+import priv.alex.core.ProcessorGlobalConfig
 
 class GypsophilaApplication : CliktCommand() {
 
@@ -21,7 +24,7 @@ class GypsophilaApplication : CliktCommand() {
         }
     }
 
-    val codeFile by option("-i", help = "Source code to be processed").file(mustExist = true, mustBeReadable = true)
+    private val codeFile by option("-i", help = "Source code to be processed").file(mustExist = true, mustBeReadable = true)
         .required()
         .check {
             if (it.isDirectory) it.listFiles()!!
@@ -33,7 +36,9 @@ class GypsophilaApplication : CliktCommand() {
         get() = "To view the subcommand Help, use [Name -h]"
 
     override fun run() {
-
+        ProcessorGlobalConfig.isMultithreading = threadConfig?.isMultithreading ?: false
+        ProcessorGlobalConfig.threadNumber = threadConfig?.threadNumber ?:4
+        ProcessorGlobalConfig.sourceFile = codeFile
     }
 }
 

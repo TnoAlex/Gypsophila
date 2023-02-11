@@ -4,6 +4,7 @@ import org.jgrapht.Graph
 import priv.alex.logger.Logger
 import priv.alex.noarg.NoArg
 import java.io.Serializable
+import java.util.*
 import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.full.createInstance
 import kotlin.reflect.full.declaredMemberProperties
@@ -19,16 +20,16 @@ class DFA(val pattern: String) : Cloneable, Serializable {
     }
 
 
-     val dfa: Graph<Int, RegexEdge>
+    private val dfa: Graph<Int, RegexEdge>
     private val startPoint = 0
-    private val endPoint: HashSet<Int>
+    private val endPoint: Set<Int>
 
 
     init {
         val nfa = NFA(pattern)
         val builder = DFABuilder(nfa)
         dfa = builder.build()
-        endPoint = builder.endPoint
+        endPoint = Collections.unmodifiableSet(builder.endPoint)
     }
 
 

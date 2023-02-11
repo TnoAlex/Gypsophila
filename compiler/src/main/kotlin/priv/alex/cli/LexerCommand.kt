@@ -6,7 +6,7 @@ import com.github.ajalt.clikt.parameters.groups.OptionGroup
 import com.github.ajalt.clikt.parameters.groups.cooccurring
 import com.github.ajalt.clikt.parameters.options.*
 import com.github.ajalt.clikt.parameters.types.file
-import com.github.ajalt.clikt.parameters.types.int
+import priv.alex.core.LexerProcessor
 
 class LexerCommand : CliktCommand() {
     init {
@@ -24,14 +24,19 @@ class LexerCommand : CliktCommand() {
     }
 
 
-    val lexicalFile by option("-il", help = "Lexical file path").file(
+    private val lexicalFile by option("-il", help = "Lexical file path").file(
         mustExist = true,
         canBeDir = false,
         mustBeReadable = true
-    )
-    val productOutput by LexerOutPutConfig().cooccurring()
+    ).required()
+    private val productOutput by LexerOutPutConfig().cooccurring()
 
     override fun run() {
-        TODO("Not yet implemented")
+        val lexerProcessor = LexerProcessor(lexicalFile,null,false)
+        productOutput?.let {
+            lexerProcessor.lexicalOutputFile = it.lexicalOutPutFile
+            lexerProcessor.needOutput = it.isGenerateLexer
+        }
+        lexerProcessor.analyse()
     }
 }

@@ -6,7 +6,7 @@ import java.io.File
 import java.io.IOException
 
 @Logger
-class CodeFile(private val file: File) {
+class CodeFile(file: File) {
 
     val fileName: String
     val lines: ArrayList<CodeLine>

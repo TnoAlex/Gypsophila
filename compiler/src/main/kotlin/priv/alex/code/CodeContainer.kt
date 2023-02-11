@@ -1,14 +1,14 @@
-package priv.alex.core
+package priv.alex.code
 
-import priv.alex.code.CodeFile
 import priv.alex.logger.Logger
 import java.io.File
 import kotlin.system.exitProcess
 
 @Logger
-class CodeDispatcher(file: File) {
+class CodeContainer(file: File) {
 
     private val codeFiles = ArrayList<CodeFile>()
+    private var position = 0
 
     init {
         if (file.isDirectory){
@@ -28,6 +28,18 @@ class CodeDispatcher(file: File) {
         if (codeFiles.isEmpty()){
             log.warn("No files were read")
             exitProcess(0)
+        }
+    }
+
+    fun advance(): CodeFile? {
+        if (position <= codeFiles.size){
+            position++
+            log.info("Processing ${codeFiles[position-1].fileName} ...")
+            return codeFiles[position-1]
+        }
+        else{
+            log.info("Processing complete")
+            return null
         }
     }
 }

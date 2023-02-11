@@ -39,10 +39,6 @@ private fun codeReaderTest(){
     val lexer = lexicalReader.readLexicon()
     val tokenBuilder = TokenBuilder(lexer)
     val res = ArrayList<Token>()
-    file.lines.forEach {
-        res.addAll(tokenBuilder.buildToken(it))
-    }
-    println()
 }
 
 private fun testDFA(){

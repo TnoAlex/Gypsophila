@@ -4,6 +4,7 @@ import priv.alex.code.CodeLine
 import priv.alex.lexer.Lexical
 import priv.alex.lexer.engine.fsm.DFA
 import priv.alex.logger.Logger
+import java.util.*
 
 @Logger
 class TokenBuilder(lexicons: HashMap<TokenType, ArrayList<Lexical>>) {
@@ -18,7 +19,7 @@ class TokenBuilder(lexicons: HashMap<TokenType, ArrayList<Lexical>>) {
 
     private val separators: ArrayList<String> = (operator + separator) as ArrayList<String>
 
-    fun buildToken(line: CodeLine): ArrayList<Token> {
+    fun buildToken(line: CodeLine): TokenLine {
         val words = line.split(separators)
         var index = 0
         val res = ArrayList<Token>()
@@ -64,7 +65,7 @@ class TokenBuilder(lexicons: HashMap<TokenType, ArrayList<Lexical>>) {
             }
             index++
         }
-        return res
+        return TokenLine(line.position,Collections.unmodifiableList(res))
     }
 
     private fun classification(string: String, flag: Boolean): Pair<Boolean, TokenType?> {
