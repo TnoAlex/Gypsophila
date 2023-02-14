@@ -6,7 +6,7 @@ on:
 
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     permissions: # The Dependency Submission API requires write permission
       contents: write
     steps:
