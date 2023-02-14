@@ -15,7 +15,7 @@ jobs:
      - name: Gradle Dependency Submission
        uses: mikepenz/gradle-dependency-submission@v0.8.4
        with:
-          use-gradlew: false
+          use-gradlew: true
           gradle-project-path: "./"
           gradle-build-module: |-
            :
