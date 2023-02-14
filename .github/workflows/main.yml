@@ -19,4 +19,8 @@ jobs:
           gradle-project-path: "./"
           gradle-build-module: |-
            :
+           :klogger
+           :compiler
+          gradle-build-configuration: |-
+           compileClasspath
    
