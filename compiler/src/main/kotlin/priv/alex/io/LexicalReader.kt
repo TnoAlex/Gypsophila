@@ -5,7 +5,6 @@ import priv.alex.lexer.Lexical
 import priv.alex.lexer.token.TokenType
 import priv.alex.logger.Logger
 import java.io.File
-import kotlin.io.path.fileVisitor
 
 @Logger
 class LexicalReader(file: File) : Reader {
@@ -27,7 +26,7 @@ class LexicalReader(file: File) : Reader {
     }
 
     fun readLexicon(): HashMap<TokenType, ArrayList<Lexical>> {
-        val res = HashMap<TokenType,ArrayList<Lexical>>()
+        val res = HashMap<TokenType,ArrayList<Lexical>>(32)
         yaml.forEach { (k, v) ->
             try {
                 val tokenType = TokenType.enumOf(k)

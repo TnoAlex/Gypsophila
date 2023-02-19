@@ -1,4 +1,4 @@
-package priv.alex.lexer.engine.fsm
+package priv.alex.lexer.engine.automaton
 
 import org.jgrapht.Graph
 import org.jgrapht.graph.builder.GraphTypeBuilder
@@ -47,20 +47,4 @@ internal abstract class FABuilder {
             graph.removeVertex(it)
         }
     }
-
-    protected fun cloneGraph(): Graph<Int, RegexEdge> {
-        val newGraph = GraphTypeBuilder.directed<Int, RegexEdge>().allowingMultipleEdges(true).allowingSelfLoops(true)
-            .weighted(false)
-            .buildGraph()!!
-
-        graph.vertexSet().forEach {
-            newGraph.addVertex(it)
-        }
-        graph.edgeSet().forEach {
-            newGraph.addEdge(it.source, it.target, RegexEdge(it))
-        }
-        return newGraph
-    }
-
-
 }

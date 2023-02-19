@@ -1,8 +1,8 @@
-package priv.alex.lexer.engine.fsm
+package priv.alex.lexer.engine.automaton
 
-import org.jgrapht.graph.DefaultEdge
+import priv.alex.core.OpenEdge
 
-class RegexEdge(val cChar: Char?, val cSet: Set<Char>?) : DefaultEdge() {
+class RegexEdge(val cChar: Char?, val cSet: Set<Char>?) : OpenEdge() {
 
     var epsilon: Boolean = false
         private set
@@ -39,11 +39,11 @@ class RegexEdge(val cChar: Char?, val cSet: Set<Char>?) : DefaultEdge() {
     }
 
 
-    public override fun getSource(): Int {
+    override fun getSource(): Int {
         return super.getSource() as Int
     }
 
-    public override fun getTarget(): Int {
+    override fun getTarget(): Int {
         return super.getTarget() as Int
     }
 

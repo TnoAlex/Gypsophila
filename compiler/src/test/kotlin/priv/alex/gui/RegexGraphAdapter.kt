@@ -7,7 +7,7 @@ import org.jgrapht.Graph
 import org.jgrapht.ext.JGraphXAdapter
 import org.jgrapht.graph.DefaultListenableGraph
 import org.jgrapht.graph.builder.GraphTypeBuilder
-import priv.alex.lexer.engine.fsm.RegexEdge
+import priv.alex.lexer.engine.automaton.RegexEdge
 import java.awt.Dimension
 import javax.swing.JFrame
 

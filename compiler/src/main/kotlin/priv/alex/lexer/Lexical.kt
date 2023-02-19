@@ -1,6 +1,6 @@
 package priv.alex.lexer
 
-import priv.alex.lexer.engine.fsm.DFA
+import priv.alex.lexer.engine.automaton.DFA
 import priv.alex.lexer.token.TokenType
 import priv.alex.noarg.NoArg
 

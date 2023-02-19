@@ -1,4 +1,4 @@
-package priv.alex.lexer.engine.fsm
+package priv.alex.lexer.engine.automaton
 
 class Alphabet(edge: RegexEdge) {
     private var cSet: Set<Char>? = null

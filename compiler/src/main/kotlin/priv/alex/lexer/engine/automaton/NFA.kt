@@ -1,4 +1,4 @@
-package priv.alex.lexer.engine.fsm
+package priv.alex.lexer.engine.automaton
 
 import org.jgrapht.Graph
 

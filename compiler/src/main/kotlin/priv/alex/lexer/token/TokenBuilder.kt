@@ -2,7 +2,7 @@ package priv.alex.lexer.token
 
 import priv.alex.code.CodeLine
 import priv.alex.lexer.Lexical
-import priv.alex.lexer.engine.fsm.DFA
+import priv.alex.lexer.engine.automaton.DFA
 import priv.alex.logger.Logger
 import java.util.*
 

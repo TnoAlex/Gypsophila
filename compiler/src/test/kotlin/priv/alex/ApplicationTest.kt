@@ -3,8 +3,8 @@ package priv.alex
 import priv.alex.code.CodeFile
 import priv.alex.gui.RegexGraphAdapter
 import priv.alex.io.LexicalReader
-import priv.alex.lexer.engine.fsm.DFA
-import priv.alex.lexer.engine.fsm.NFABuilder
+import priv.alex.lexer.engine.automaton.DFA
+import priv.alex.lexer.engine.automaton.NFABuilder
 import priv.alex.lexer.token.Token
 import priv.alex.lexer.token.TokenBuilder
 import java.io.File
