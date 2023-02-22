@@ -1,4 +1,4 @@
-package priv.alex.parser.engine
+package priv.alex.parser.engine.cc
 
 import priv.alex.core.OpenEdge
 import priv.alex.parser.Symbol

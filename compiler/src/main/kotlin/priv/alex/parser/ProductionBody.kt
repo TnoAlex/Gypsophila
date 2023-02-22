@@ -7,14 +7,30 @@ data class ProductionBody(val content: List<Symbol>) : Cloneable{
         private set
 
     fun advance(): Symbol {
-        return if (projectPos == content.lastIndex){
+        return if (projectPos == content.lastIndex) {
             endProject = true
             content[projectPos]
-        }else{
+        } else {
             projectPos++
             content[projectPos]
         }
     }
-    override fun clone(): ProductionBody =  ProductionBody(content)
 
+    override fun clone(): ProductionBody = ProductionBody(content)
+
+    override fun equals(other: Any?): Boolean {
+        if (other == null) return false
+        if (javaClass != other.javaClass) return false
+        other as ProductionBody
+        if (other.content != content) return false
+        if (other.projectPos != projectPos) return false
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = content.hashCode()
+        result = 31 * result + projectPos
+        result = 31 * result + endProject.hashCode()
+        return result
+    }
 }

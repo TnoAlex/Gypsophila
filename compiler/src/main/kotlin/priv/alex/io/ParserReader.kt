@@ -7,9 +7,9 @@ import java.io.File
 import java.util.*
 
 @Logger
-class ParserReader (file:File) : Reader {
+class ParserReader(file: File) : Reader {
 
-    private val yaml: Map<String, Any>
+    private val yaml: Iterable<Any>
 
     init {
         log.info("Load lexical rules <- ${file.name}")
@@ -18,27 +18,52 @@ class ParserReader (file:File) : Reader {
             throw RuntimeException("Illegal documents")
         }
         try {
-            yaml = Yaml().load(file.reader(Charsets.UTF_8)) as Map<String, Any>
+            yaml = Yaml().loadAll(file.reader(Charsets.UTF_8)) as Iterable<Any>
         } catch (e: Exception) {
             log.error("Unable to load syntax")
             throw RuntimeException(e.message, e.cause)
         }
     }
 
-    fun readParser(): List<Production> {
+
+    fun readParser(): Pair<Production, MutableList<Production>> {
         val res = ArrayList<Production>(32)
-        yaml.forEach { (k,v)->
+        yaml as List<Any>
+        assert(yaml.size == 2) { "An incomprehensible syntax file" }
+        val entryPointMap = yaml[0] as Map<*, *>
+        assert(entryPointMap.keys.size == 1 && entryPointMap.values.size == 1) { "Syntax that contains multiple starting characters is not supported" }
+
+        val entryPointHead = ProductionHead(NonTerminator(entryPointMap.keys.first() as String))
+        val symbols = ArrayList<Symbol>(8)
+
+        entryPointMap.values.forEach {
+            it as String
+            it.split(" ").forEach { s ->
+                if (NonTerminator.isNonTerminator(s))
+                    symbols.add(Terminator(s))
+                else
+                    symbols.add(NonTerminator(s))
+            }
+        }
+        val entryPoint = Production(entryPointHead, ProductionBody(symbols))
+        symbols.clear()
+
+        (yaml[1] as Map<*, *>).forEach { (k, v) ->
+            k as String
             val head = ProductionHead(NonTerminator(k))
-            val bodies = ArrayList<Symbol>(4)
             v as List<*>
             v.forEach {
-                if (Terminator.isTerminator(it as String))
-                    bodies.add(Terminator(it))
-                else
-                    bodies.add(NonTerminator(it))
+                it as String
+                it.split(" ").forEach { s ->
+                    if (NonTerminator.isNonTerminator(s))
+                        symbols.add(Terminator(s))
+                    else
+                        symbols.add(NonTerminator(s))
+                }
+                res.add(Production(head, ProductionBody(symbols)))
+                symbols.clear()
             }
-            res.add(Production(head, ProductionBody(Collections.unmodifiableList(bodies))))
         }
-        return Collections.unmodifiableList(res)
+        return Pair(entryPoint, Collections.unmodifiableList(res))
     }
 }
