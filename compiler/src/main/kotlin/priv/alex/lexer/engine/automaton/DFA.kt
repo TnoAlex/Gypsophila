@@ -1,8 +1,8 @@
 package priv.alex.lexer.engine.automaton
 
 import org.jgrapht.Graph
+import priv.alex.core.NoArg
 import priv.alex.logger.Logger
-import priv.alex.noarg.NoArg
 import java.io.Serializable
 import java.util.*
 import kotlin.reflect.KMutableProperty1

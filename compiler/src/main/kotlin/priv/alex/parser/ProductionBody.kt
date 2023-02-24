@@ -3,17 +3,29 @@ package priv.alex.parser
 data class ProductionBody(val content: List<Symbol>) : Cloneable{
 
     private var projectPos = 0
+    private var currentPos = 0
     var endProject = false
         private set
 
     fun advance(): Symbol {
-        return if (projectPos == content.lastIndex) {
+        return if (projectPos == content.size) {
             endProject = true
             content[projectPos]
         } else {
+            currentPos = projectPos
             projectPos++
-            content[projectPos]
+            content[currentPos]
         }
+    }
+
+    fun current(): Symbol {
+        return content[currentPos]
+    }
+
+    fun stringEnd(): Boolean {
+        if (projectPos >= content.lastIndex)
+            return true
+        return false
     }
 
     override fun clone(): ProductionBody = ProductionBody(content)

@@ -1,3 +1,3 @@
-package priv.alex.noarg
+package priv.alex.core
 
 annotation class NoArg()

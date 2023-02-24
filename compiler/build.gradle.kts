@@ -16,7 +16,7 @@ repositories {
 java.sourceCompatibility = JavaVersion.VERSION_17
 
 noArg {
-    annotation("priv.alex.noarg.NoArg")
+    annotation("priv.alex.core.NoArg")
     invokeInitializers = true
 }
 
