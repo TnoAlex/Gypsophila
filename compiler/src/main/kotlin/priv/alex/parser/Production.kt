@@ -15,4 +15,8 @@ data class Production(val head: ProductionHead, val body: ProductionBody) {
         result = 31 * result + body.hashCode()
         return result
     }
+
+    override fun toString(): String {
+        return "$head->$body"
+    }
 }

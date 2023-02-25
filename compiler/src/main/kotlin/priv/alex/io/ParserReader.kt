@@ -25,8 +25,8 @@ class ParserReader(file: File) : Reader {
     }
 
 
-    fun readParser(): Pair<Production, MutableList<Production>> {
-        val res = ArrayList<Production>(32)
+    fun readParser(): Pair<Production, List<Production>> {
+        val res = HashSet<Production>(32)
         assert(yaml.size == 2) { "An incomprehensible syntax file" }
         val entryPointMap = yaml[0] as Map<*, *>
         assert(entryPointMap.keys.size == 1 && entryPointMap.values.size == 1) { "Syntax that contains multiple starting characters is not supported" }
@@ -61,6 +61,6 @@ class ParserReader(file: File) : Reader {
                 res.add(Production(head, ProductionBody(symbol)))
             }
         }
-        return Pair(entryPoint, res)
+        return Pair(entryPoint, res.toList())
     }
 }

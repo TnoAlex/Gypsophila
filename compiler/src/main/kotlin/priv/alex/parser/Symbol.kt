@@ -12,4 +12,8 @@ abstract class Symbol(val content: String) {
     override fun hashCode(): Int {
         return content.hashCode()
     }
+
+    override fun toString(): String {
+        return content
+    }
 }

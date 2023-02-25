@@ -45,4 +45,13 @@ data class ProductionBody(val content: List<Symbol>) : Cloneable{
         result = 31 * result + endProject.hashCode()
         return result
     }
+
+    override fun toString(): String {
+        val builder = StringBuilder()
+        content.forEach {
+            builder.append(it).append(" ")
+        }
+        builder.removeSuffix(" ")
+        return builder.toString()
+    }
 }
