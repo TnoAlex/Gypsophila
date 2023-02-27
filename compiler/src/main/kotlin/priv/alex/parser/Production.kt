@@ -1,6 +1,6 @@
 package priv.alex.parser
 
-data class Production(val head: ProductionHead, val body: ProductionBody) {
+data class Production(val head: ProductionHead, val body: ProductionBody) : Cloneable {
 
     override fun equals(other: Any?): Boolean {
         if (other == null) return false
@@ -14,6 +14,10 @@ data class Production(val head: ProductionHead, val body: ProductionBody) {
         var result = head.hashCode()
         result = 31 * result + body.hashCode()
         return result
+    }
+
+    public override fun clone(): Production {
+        return Production(head.clone(), body.clone())
     }
 
     override fun toString(): String {

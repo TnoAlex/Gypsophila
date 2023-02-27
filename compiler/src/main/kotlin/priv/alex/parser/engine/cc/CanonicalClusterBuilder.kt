@@ -24,14 +24,16 @@ class CanonicalClusterBuilder(entryPoint: Production, productionList: List<Produ
     init {
         first(productionList)
         val appendProductionHead = NonTerminator(entryPoint.head.content.content.replace(">", "*>"))
-        productions.add(
+        val t = ArrayList<Production>()
+        t.add(
             Production(
                 ProductionHead(appendProductionHead),
                 ProductionBody(listOf(entryPoint.head.content))
             )
         )
-        productions.addAll(productionList)
-        val current = CanonicalCluster(follow(productions))
+        t.addAll(productionList)
+        t.forEach { productions.add(it.clone()) }
+        val current = CanonicalCluster(follow(t))
         addNode(current)
     }
 
@@ -45,9 +47,10 @@ class CanonicalClusterBuilder(entryPoint: Production, productionList: List<Produ
         return ccGraph
     }
 
-    private fun advance(cc: CanonicalCluster): ArrayList<CanonicalCluster> {
+    private fun advance(baseNode: CanonicalCluster): ArrayList<CanonicalCluster> {
         val preAdvance = HashMap<CanonicalClusterItem, Symbol>()
         val res = ArrayList<CanonicalCluster>(8)
+        val cc = baseNode.clone()
         cc.forEach {
             if (it.production.body.endProject)
                 return@forEach
@@ -58,13 +61,18 @@ class CanonicalClusterBuilder(entryPoint: Production, productionList: List<Produ
             newCc.add(k)
             val newProductions = productions.filter { it.head.content == k.production.body.current() }
             newCc.addAll(follow(newProductions, k))
-            addNode(CanonicalCluster(newCc))
-            res.add(CanonicalCluster(newCc))
-            ccGraph.addEdge(cc, CanonicalCluster(newCc), CanonicalClusterEdge(v))
+            val t = CanonicalCluster(newCc)
+            addNode(t)
+            res.add(t)
+            ccGraph.vertexSupplier
+            ccGraph.addEdge(baseNode, t, CanonicalClusterEdge(v))
         }
         return res
     }
 
+    /**
+     * 求取first集
+     */
     private fun first(productionList: List<Production>) {
         for (i in productionList.indices) {
             if (productionList[i].body.content.first() is Terminator) {
@@ -100,6 +108,9 @@ class CanonicalClusterBuilder(entryPoint: Production, productionList: List<Produ
         }
     }
 
+    /**
+     * 求取follow集
+     */
     private fun follow(list: List<Production>, initCC: CanonicalClusterItem? = null): Set<CanonicalClusterItem> {
         val res = HashMap<Production, HashSet<Symbol>>(list.size)
         val incompleteMap = HashMap<Production, Production>()
