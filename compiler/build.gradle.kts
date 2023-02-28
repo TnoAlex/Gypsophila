@@ -23,7 +23,7 @@ noArg {
 
 dependencies {
     testImplementation(kotlin("test"))
-    implementation("org.yaml:snakeyaml:1.33")
+    implementation("org.yaml:snakeyaml:2.0")
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.8.0")
     implementation("org.jgrapht:jgrapht-core:1.5.1")
     implementation("com.github.ajalt.clikt:clikt:3.5.1")
