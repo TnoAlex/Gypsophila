@@ -1,6 +1,8 @@
 package priv.alex.parser.engine.cc
 
-data class CanonicalCluster(val item: Set<CanonicalClusterItem>) : Iterable<CanonicalClusterItem>, Cloneable {
+data class CanonicalCluster(val item: Set<CanonicalClusterItem>, val ccId: Int) : Iterable<CanonicalClusterItem>,
+    Cloneable {
+
     override fun equals(other: Any?): Boolean {
         if (other == null) return false
         if (other.javaClass != javaClass) return false
@@ -21,7 +23,7 @@ data class CanonicalCluster(val item: Set<CanonicalClusterItem>) : Iterable<Cano
     public override fun clone(): CanonicalCluster {
         val i = HashSet<CanonicalClusterItem>()
         item.forEach { i.add(it.clone()) }
-        return CanonicalCluster(i)
+        return CanonicalCluster(i, ccId)
     }
 
     override fun toString(): String {

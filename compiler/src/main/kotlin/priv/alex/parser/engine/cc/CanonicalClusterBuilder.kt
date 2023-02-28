@@ -15,10 +15,12 @@ class CanonicalClusterBuilder(entryPoint: Production, productionList: List<Produ
 
     private val firstMap = HashMap<Production, HashSet<Terminator>>()
     private val productions = ArrayList<Production>()
+    private var currentCc = 0
 
 
     private fun addNode(cluster: CanonicalCluster) {
         ccGraph.addVertex(cluster)
+        currentCc++
     }
 
     init {
@@ -33,7 +35,7 @@ class CanonicalClusterBuilder(entryPoint: Production, productionList: List<Produ
         )
         t.addAll(productionList)
         t.forEach { productions.add(it.clone()) }
-        val current = CanonicalCluster(follow(t))
+        val current = CanonicalCluster(follow(t), currentCc)
         addNode(current)
     }
 
@@ -61,7 +63,7 @@ class CanonicalClusterBuilder(entryPoint: Production, productionList: List<Produ
             newCc.add(k)
             val newProductions = productions.filter { it.head.content == k.production.body.current() }
             newCc.addAll(follow(newProductions, k))
-            val t = CanonicalCluster(newCc)
+            val t = CanonicalCluster(newCc, currentCc)
             if (!ccGraph.vertexSet().contains(t))
                 res.add(t)
             addNode(t)

@@ -2,6 +2,8 @@ package priv.alex.parser
 
 data class ProductionBody(val content: List<Symbol>) : Cloneable {
 
+    var projectState = ProjectState.SHIFT
+        private set
 
     var projectPos = 0
     var endProject = false
@@ -10,6 +12,7 @@ data class ProductionBody(val content: List<Symbol>) : Cloneable {
     fun advance(): Symbol {
         return if (projectPos == content.size) {
             endProject = true
+            projectState = ProjectState.REDUCE
             EOF()
         } else {
             projectPos++
@@ -38,6 +41,7 @@ data class ProductionBody(val content: List<Symbol>) : Cloneable {
         val res = ProductionBody(content)
         res.projectPos = projectPos
         res.endProject = endProject
+        res.projectState = projectState
         return res
     }
 
@@ -66,4 +70,6 @@ data class ProductionBody(val content: List<Symbol>) : Cloneable {
         builder.removeSuffix(" ")
         return builder.toString()
     }
+
+
 }
