@@ -62,9 +62,9 @@ class CanonicalClusterBuilder(entryPoint: Production, productionList: List<Produ
             val newProductions = productions.filter { it.head.content == k.production.body.current() }
             newCc.addAll(follow(newProductions, k))
             val t = CanonicalCluster(newCc)
+            if (!ccGraph.vertexSet().contains(t))
+                res.add(t)
             addNode(t)
-            res.add(t)
-            ccGraph.vertexSupplier
             ccGraph.addEdge(baseNode, t, CanonicalClusterEdge(v))
         }
         return res
