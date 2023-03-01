@@ -21,10 +21,22 @@ enum class TokenType {
                 "Qualifier" -> QUALIFIER
                 "Separator" -> SEPARATOR
                 "Comment" -> COMMENT
-                else-> {
+                else -> {
                     log.info("Incomprehensible Token")
                     throw RuntimeException("Incomprehensible Token")
                 }
+            }
+        }
+
+        fun stringOf(type: TokenType): String {
+            return when (type) {
+                KEYWORDS -> "Keywords"
+                IDENTIFIER -> "Identifier"
+                OPERATOR -> "Operator"
+                LITERAL -> "Literal"
+                QUALIFIER -> "Qualifier"
+                SEPARATOR -> "Separator"
+                COMMENT -> "Comment"
             }
         }
     }

@@ -71,5 +71,13 @@ data class ProductionBody(val content: List<Symbol>) : Cloneable {
         return builder.toString()
     }
 
+    fun initState(): ProductionBody {
+        val res = clone()
+        res.projectPos = 0
+        res.projectState = ProjectState.SHIFT
+        res.endProject = false
+        return res
+    }
+
 
 }

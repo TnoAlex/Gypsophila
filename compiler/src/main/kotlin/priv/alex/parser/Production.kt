@@ -24,4 +24,8 @@ data class Production(val head: ProductionHead, val body: ProductionBody) : Clon
         return "$head->$body"
     }
 
+    fun initProduction(): Production {
+        return Production(head, body.initState())
+    }
+
 }

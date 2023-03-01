@@ -11,13 +11,13 @@ class TokenBuilder(lexicons: HashMap<TokenType, ArrayList<Lexical>>) {
 
     private val keywords = lexicons[TokenType.KEYWORDS]!!
     private val identifier = lexicons[TokenType.IDENTIFIER]!!
-    private val operator = lexicons[TokenType.OPERATOR]!!.map { it.value!! }
+    private val operator = lexicons[TokenType.OPERATOR]!!.associate { it.value!! to it.name }
     private val literal = lexicons[TokenType.LITERAL]!!
     private val qualifier = lexicons[TokenType.QUALIFIER]!!
-    private val separator = lexicons[TokenType.SEPARATOR]!!.map { it.value!! }
+    private val separator = lexicons[TokenType.SEPARATOR]!!.associate { it.value!! to it.name }
     private val comment = lexicons[TokenType.COMMENT]!!
 
-    private val separators: ArrayList<String> = (operator + separator) as ArrayList<String>
+    private val separators: ArrayList<String> = (operator.keys.toList() + separator.keys.toList()) as ArrayList<String>
 
     fun buildToken(line: CodeLine): TokenLine {
         val words = line.split(separators)
@@ -35,23 +35,51 @@ class TokenBuilder(lexicons: HashMap<TokenType, ArrayList<Lexical>>) {
                         t += words[tindex]
                         token = classification(t,true)
                     }
-                    if (token.second == null){
-                        if (words[index] in operator) {
-                            res.add(Token(TokenType.OPERATOR, words[index], Pair(line.position, index)))
-                        } else if (words[index] in separators) {
-                            res.add(Token(TokenType.SEPARATOR, words[index], Pair(line.position, index)))
+                    if (token.second == null) {
+                        if (words[index] in operator.keys) {
+                            res.add(
+                                Token(
+                                    TokenType.OPERATOR,
+                                    words[index],
+                                    Pair(line.position, index),
+                                    operator[words[index]]!!
+                                )
+                            )
+                        } else if (words[index] in separator.keys) {
+                            res.add(
+                                Token(
+                                    TokenType.SEPARATOR,
+                                    words[index],
+                                    Pair(line.position, index),
+                                    separator[words[index]]!!
+                                )
+                            )
                         }
                     }
                     else{
-                        res.add(Token(token.second!!,t, Pair(line.position,index)))
+                        res.add(Token(token.second!!.first, t, Pair(line.position, index), token.second!!.second))
                         index = tindex
                     }
 
                 } else {
                     if (words[index] in operator) {
-                        res.add(Token(TokenType.OPERATOR, words[index], Pair(line.position, index)))
-                    } else if (words[index] in separators) {
-                        res.add(Token(TokenType.SEPARATOR, words[index], Pair(line.position, index)))
+                        res.add(
+                            Token(
+                                TokenType.OPERATOR,
+                                words[index],
+                                Pair(line.position, index),
+                                operator[words[index]]!!
+                            )
+                        )
+                    } else if (words[index] in separator) {
+                        res.add(
+                            Token(
+                                TokenType.SEPARATOR,
+                                words[index],
+                                Pair(line.position, index),
+                                separator[words[index]]!!
+                            )
+                        )
                     }
                 }
             } else {
@@ -60,7 +88,14 @@ class TokenBuilder(lexicons: HashMap<TokenType, ArrayList<Lexical>>) {
                     log.error("You have an error in your input;In line ${line.position},close to \'${words[index]}\'")
                     throw RuntimeException("Unrecognized symbol")
                 } else {
-                    res.add(Token(token.second!!, words[index], Pair(line.position, index)))
+                    res.add(
+                        Token(
+                            token.second!!.first,
+                            words[index],
+                            Pair(line.position, index),
+                            token.second!!.second
+                        )
+                    )
                 }
             }
             index++
@@ -68,12 +103,12 @@ class TokenBuilder(lexicons: HashMap<TokenType, ArrayList<Lexical>>) {
         return TokenLine(line.position,Collections.unmodifiableList(res))
     }
 
-    private fun classification(string: String, flag: Boolean): Pair<Boolean, TokenType?> {
+    private fun classification(string: String, flag: Boolean): Pair<Boolean, Pair<TokenType, String>?> {
 
         comment.forEach {
             val status = it.dfa!!.match(string)
             if (status == DFA.DFAStatus.ACCEPT)
-                return Pair(true, TokenType.COMMENT)
+                return Pair(true, Pair(TokenType.COMMENT, it.name))
             else if (status == DFA.DFAStatus.INCOMPLETE && flag)
                 return Pair(true, null)
         }
@@ -81,7 +116,7 @@ class TokenBuilder(lexicons: HashMap<TokenType, ArrayList<Lexical>>) {
         literal.forEach {
             val status = it.dfa!!.match(string)
             if (status == DFA.DFAStatus.ACCEPT)
-                return Pair(true, TokenType.LITERAL)
+                return Pair(true, Pair(TokenType.LITERAL, it.name))
             else if (status == DFA.DFAStatus.INCOMPLETE && flag)
                 return Pair(true, null)
 
@@ -89,21 +124,21 @@ class TokenBuilder(lexicons: HashMap<TokenType, ArrayList<Lexical>>) {
         qualifier.forEach {
             val status = it.dfa!!.match(string)
             if (status == DFA.DFAStatus.ACCEPT) {
-                return Pair(true, TokenType.QUALIFIER)
+                return Pair(true, Pair(TokenType.QUALIFIER, it.name))
             } else if (status == DFA.DFAStatus.INCOMPLETE && flag)
                 return Pair(true, null)
         }
         keywords.forEach {
             val status = it.dfa!!.match(string)
             if (status == DFA.DFAStatus.ACCEPT) {
-                return Pair(true, TokenType.KEYWORDS)
+                return Pair(true, Pair(TokenType.KEYWORDS, it.name))
             } else if (status == DFA.DFAStatus.INCOMPLETE && flag)
                 return Pair(true, null)
         }
         identifier.forEach {
             val status = it.dfa!!.match(string)
             if (status == DFA.DFAStatus.ACCEPT) {
-                return Pair(true, TokenType.IDENTIFIER)
+                return Pair(true, Pair(TokenType.IDENTIFIER, it.name))
             } else if (status == DFA.DFAStatus.INCOMPLETE && flag)
                 return Pair(true, null)
         }

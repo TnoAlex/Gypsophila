@@ -12,11 +12,11 @@ class ASTNode(var value: String) {
         graph.addEdge(this, child)
     }
 
-    fun getChildren(): List<ASTNode> {
+    fun child(): List<ASTNode> {
         return graph.outgoingEdgesOf(this).map { graph.getEdgeTarget(it) }
     }
 
-    fun getParent(): ASTNode? {
+    fun parent(): ASTNode? {
         return graph.incomingEdgesOf(this).map { graph.getEdgeSource(it) }.firstOrNull()
     }
 }

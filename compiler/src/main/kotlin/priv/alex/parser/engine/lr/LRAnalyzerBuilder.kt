@@ -2,16 +2,19 @@ package priv.alex.parser.engine.lr
 
 
 import org.jgrapht.Graph
+import priv.alex.logger.Logger
+import priv.alex.parser.EOF
 import priv.alex.parser.NonTerminator
 import priv.alex.parser.Production
 import priv.alex.parser.ProjectState
 import priv.alex.parser.engine.cc.CanonicalCluster
 import priv.alex.parser.engine.cc.CanonicalClusterEdge
 
+@Logger
 class LRAnalyzerBuilder(productions: Set<Production>) {
 
     private val analyseTable = LRTable()
-    private val productionMap = HashMap<Int, Production>()
+    val productionMap = HashMap<Int, Production>()
     private val invertedMap = HashMap<Production, Int>()
     private val acceptProduction: Production
 
@@ -24,6 +27,7 @@ class LRAnalyzerBuilder(productions: Set<Production>) {
     }
 
     fun build(cc: Graph<CanonicalCluster, CanonicalClusterEdge>): LRTable {
+        log.info("Build Lr analyze table")
         cc.vertexSet().forEach {
             val outEdge = cc.outgoingEdgesOf(it)
             outEdge.forEach { e ->
@@ -35,16 +39,22 @@ class LRAnalyzerBuilder(productions: Set<Production>) {
             }
             it.item.forEach { c ->
                 if (c.production.body.projectState == ProjectState.REDUCE) {
-                    if (c.production.hashCode() == productionMap[0]!!.hashCode())
-                        c.sc.forEach { s ->
-                            analyseTable.addAction(
-                                Pair(it.ccId, s),
-                                LRAction(Action.REDUCE, invertedMap[c.production]!!)
-                            )
-                        }
+                    if (c.production.hashCode() == productionMap[0]!!.hashCode()) {
+                        analyseTable.addAction(
+                            Pair(it.ccId, EOF()),
+                            LRAction(Action.ACCEPT, invertedMap[c.production.initProduction()]!!)
+                        )
+                    }
+                    c.sc.forEach { s ->
+                        analyseTable.addAction(
+                            Pair(it.ccId, s),
+                            LRAction(Action.REDUCE, invertedMap[c.production.initProduction()]!!)
+                        )
+                    }
                 }
             }
         }
+        log.info("Done")
         return analyseTable
     }
 }

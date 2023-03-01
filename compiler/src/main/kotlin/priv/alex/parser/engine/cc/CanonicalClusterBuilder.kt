@@ -40,12 +40,14 @@ class CanonicalClusterBuilder(entryPoint: Production, productionList: List<Produ
     }
 
     fun build(): Graph<CanonicalCluster, CanonicalClusterEdge> {
+        log.info("Try to build canonical cluster")
         val ccQueue = ArrayDeque<CanonicalCluster>()
         ccQueue.add(ccGraph.vertexSet().first())
         while (ccQueue.isNotEmpty()) {
             val newCcs = advance(ccQueue.removeFirst())
             ccQueue.addAll(newCcs)
         }
+        log.info("Done")
         return ccGraph
     }
 

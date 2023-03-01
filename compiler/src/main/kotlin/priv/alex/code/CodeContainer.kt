@@ -32,14 +32,13 @@ class CodeContainer(file: File) {
     }
 
     fun advance(): CodeFile? {
-        if (position <= codeFiles.size){
+        return if (position <= codeFiles.size) {
             position++
-            log.info("Processing ${codeFiles[position-1].fileName} ...")
-            return codeFiles[position-1]
-        }
-        else{
+            log.info("Processing ${codeFiles[position - 1].fileName} ...")
+            codeFiles[position - 1]
+        } else {
             log.info("Processing complete")
-            return null
+            null
         }
     }
 }
