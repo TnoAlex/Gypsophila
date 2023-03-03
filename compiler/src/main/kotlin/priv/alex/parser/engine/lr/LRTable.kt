@@ -37,16 +37,16 @@ class LRTable {
         actions[state] = action
     }
 
-    fun action(state: Int, token: Token?): LRAction? {
+    fun action(state: Int, token: Token?): Pair<LRAction, Symbol>? {
         if (token == null) {
-            return actions[Pair(state, EOF())]
+            actions[Pair(state, EOF())]?.let { return Pair(it, EOF()) } ?: let { return null }
         } else {
             var symbol = Terminator(TokenType.stringOf(token.type))
-            actions[Pair(state, symbol)]?.let { return it } ?: let {
+            actions[Pair(state, symbol)]?.let { return Pair(it, symbol) } ?: let {
                 symbol = Terminator(token.name)
-                actions[Pair(state, symbol)]?.let { a -> return a } ?: let {
+                actions[Pair(state, symbol)]?.let { a -> return Pair(a, symbol) } ?: let {
                     symbol = Terminator(token.rawText)
-                    actions[Pair(state, symbol)]?.let { a -> return a } ?: let {
+                    actions[Pair(state, symbol)]?.let { a -> return Pair(a, symbol) } ?: let {
                         return null
                     }
                 }
