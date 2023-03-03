@@ -85,19 +85,24 @@ class CanonicalClusterBuilder(entryPoint: Production, productionList: List<Produ
                     hashSetOf(productionList[i].body.content.first() as Terminator)
                 )?.add(productionList[i].body.content.first() as Terminator)
             } else {
-                var nextSymbol = productionList[i].body.content.first()
-                val symbolQueue = ArrayDeque<Symbol>(8)
-                while (nextSymbol is NonTerminator) {
-                    productionList.filter { it.head.content == nextSymbol }.forEach {
-                        if (it.body.content.first() is Terminator) {
-                            firstMap[productionList[i]]?.add(it.body.content.first() as Terminator)
-                                ?: firstMap.put(
-                                    productionList[i],
-                                    hashSetOf(it.body.content.first() as Terminator)
-                                )
-                        } else {
-                            symbolQueue.add(it.body.content.first())
-                        }
+                var nextSymbol = productionList[i]
+                val symbolQueue = ArrayDeque<Production>(8)
+                val allSymbol = ArrayList<Production>(32)
+                while (nextSymbol.body.content.first() is NonTerminator) {
+                    productionList.filter { it.head.content == nextSymbol.body.content.first() && it != productionList[i] }
+                        .forEach {
+                            if (it.body.content.first() is Terminator) {
+                                firstMap[productionList[i]]?.add(it.body.content.first() as Terminator)
+                                    ?: firstMap.put(
+                                        productionList[i],
+                                        hashSetOf(it.body.content.first() as Terminator)
+                                    )
+                            } else {
+                                if (!allSymbol.contains(it)) {
+                                    symbolQueue.add(it)
+                                    allSymbol.add(it)
+                                }
+                            }
                     }
                     nextSymbol = symbolQueue.removeFirstOrNull() ?: break
                 }
