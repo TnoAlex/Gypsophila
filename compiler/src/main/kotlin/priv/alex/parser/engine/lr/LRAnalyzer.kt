@@ -6,6 +6,8 @@ import priv.alex.ast.ASTNode
 import priv.alex.lexer.token.Token
 import priv.alex.lexer.token.TokenFile
 import priv.alex.logger.Logger
+import priv.alex.parser.EOF
+import priv.alex.parser.NonTerminator
 import priv.alex.parser.Production
 import priv.alex.parser.Symbol
 import priv.alex.parser.engine.cc.CanonicalCluster
@@ -13,18 +15,23 @@ import priv.alex.parser.engine.cc.CanonicalClusterEdge
 import java.util.*
 
 @Logger
-class LRAnalyzer(productions: Set<Production>, cc: Graph<CanonicalCluster, CanonicalClusterEdge>) {
+class LRAnalyzer(
+    productions: Set<Production>,
+    cc: Graph<CanonicalCluster, CanonicalClusterEdge>,
+    acceptProduction: Production
+) {
 
     private val analyseStack = ArrayDeque<Int>()
 
     //最右推导逆过程
-    private var astNode: ASTNode? = null
+    private var ast = AST()
+    private val astStack = ArrayDeque<Pair<NonTerminator, ASTNode>>()
     private val symbolStack = ArrayDeque<Pair<Symbol, Token?>>()
     private val productionMap: HashMap<Int, Production>
     private val analyseTable: LRTable
 
     init {
-        val builder = LRAnalyzerBuilder(productions)
+        val builder = LRAnalyzerBuilder(productions, acceptProduction)
         productionMap = builder.productionMap
         analyseTable = builder.build(cc)
     }
@@ -32,6 +39,7 @@ class LRAnalyzer(productions: Set<Production>, cc: Graph<CanonicalCluster, Canon
     fun analyze(tokenFile: TokenFile): AST {
         log.info("Parser ${tokenFile.fileName}")
         analyseStack.push(0)
+        symbolStack.push(Pair(EOF(), null))
         tokenFile.tokens.forEach {
             it.tokens.forEach { token ->
                 val action = analyseTable.action(analyseStack.peek(), token) ?: let {
@@ -48,25 +56,25 @@ class LRAnalyzer(productions: Set<Production>, cc: Graph<CanonicalCluster, Canon
             }
         }
         val lastAction = analyseTable.action(analyseStack.peek(), null) ?: let {
-            log.error("The current grammar cannot parse this token sequence")
-            throw RuntimeException("Grammar mismatch")
+            log.error("The current syntax cannot parse this token sequence")
+            throw RuntimeException("Syntax mismatch")
         }
         if (lastAction.first.action == Action.ACCEPT) {
             log.info("${tokenFile.fileName} -> Accept")
             analyseStack.clear()
             symbolStack.clear()
         } else {
-            log.info("The current grammar cannot parse this token sequence")
-            throw RuntimeException("Grammar mismatch")
+            log.info("The current syntax cannot parse this token sequence")
+            throw RuntimeException("Syntax  mismatch")
         }
         //清空分析栈
-        return AST(astNode!!)
+        return ast
     }
 
     private fun reduce(action: Pair<LRAction, Symbol>) {
         analyseStack.pop()
         val production = productionMap[action.first.actionTarget]!!
-        val goto = analyseTable.goto(production.head.content) ?: let {
+        val goto = analyseTable.goto(analyseStack.peek(), production.head.content) ?: let {
             log.error("The GOTO target cannot be obtained through the current generation during the reduce process")
             throw RuntimeException("Unattainable GOTO target")
         }
@@ -76,14 +84,19 @@ class LRAnalyzer(productions: Set<Production>, cc: Graph<CanonicalCluster, Canon
             popSymbol.push(symbolStack.pop())
         }
         val node = ASTNode(Pair(production.head.content, null))
+        ast.addChild(null, node)
+        astStack.push(Pair(production.head.content, node))
         while (popSymbol.isNotEmpty()) {
-            node.addChild(ASTNode(popSymbol.pop()))
-        }
-        astNode = if (astNode == null)
-            node
-        else {
-            node.addChild(astNode!!)
-            node
+            val symbol = popSymbol.pop()
+            if (symbol.first is NonTerminator) {
+                val child = astStack.firstOrNull { symbol.first == it.first } ?: let {
+                    log.error("The syntax tree node cannot be mounted to the specified location")
+                    throw RuntimeException("NullPointer exception")
+                }
+                ast.link(node, child.second)
+            } else {
+                ast.addChild(node, ASTNode(symbol))
+            }
         }
         symbolStack.push(Pair(production.head.content, null))
     }

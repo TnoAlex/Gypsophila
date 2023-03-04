@@ -16,8 +16,10 @@ data class ProductionBody(val content: List<Symbol>) : Cloneable {
             EOF()
         } else {
             projectPos++
-            if (projectPos == content.size)
+            if (projectPos == content.size) {
                 endProject = true
+                projectState = ProjectState.REDUCE
+            }
             content[projectPos - 1]
         }
     }
@@ -31,10 +33,19 @@ data class ProductionBody(val content: List<Symbol>) : Cloneable {
             content[projectPos]
     }
 
-    fun stringEnd(): Boolean {
-        if (projectPos >= content.lastIndex)
-            return true
-        return false
+    fun currentNext(): Symbol? {
+        return if (projectPos + 1 >= content.size)
+            null
+        else {
+            content[projectPos + 1]
+        }
+    }
+
+    fun currentFirst(): Symbol? {
+        if (projectPos == 0)
+            return null
+        else
+            return content[projectPos - 1]
     }
 
     public override fun clone(): ProductionBody {

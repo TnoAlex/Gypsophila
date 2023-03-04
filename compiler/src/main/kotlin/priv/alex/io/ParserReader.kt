@@ -11,7 +11,7 @@ class ParserReader(file: File) : Reader {
     private val yaml: List<Any>
 
     init {
-        log.info("Load lexical rules <- ${file.name}")
+        log.info("Load syntax rules <- ${file.name}")
         if (!file.isFile) {
             log.error("Illegal documents")
             throw RuntimeException("Illegal documents")

@@ -23,17 +23,19 @@ enum class Action {
 
 class LRTable {
     private val actions = HashMap<Pair<Int, Symbol>, LRAction>()
-    private val goto = HashMap<Symbol, Int>()
+    private val goto = HashMap<Pair<Int, Symbol>, Int>()
 
-    fun goto(symbol: Symbol): Int? {
-        return goto[symbol]
+    fun goto(state: Int, symbol: Symbol): Int? {
+        return goto[Pair(state, symbol)]
     }
 
-    fun addGoto(symbol: Symbol, state: Int) {
-        goto[symbol] = state
+    fun addGoto(state: Pair<Int, Symbol>, target: Int) {
+        goto[state] = target
     }
 
     fun addAction(state: Pair<Int, Symbol>, action: LRAction) {
+        if (actions.keys.contains(state))
+            println()
         actions[state] = action
     }
 

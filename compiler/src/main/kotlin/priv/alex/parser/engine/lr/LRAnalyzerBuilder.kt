@@ -11,19 +11,17 @@ import priv.alex.parser.engine.cc.CanonicalCluster
 import priv.alex.parser.engine.cc.CanonicalClusterEdge
 
 @Logger
-class LRAnalyzerBuilder(productions: Set<Production>) {
+class LRAnalyzerBuilder(productions: Set<Production>, private val acceptProduction: Production) {
 
     private val analyseTable = LRTable()
     val productionMap = HashMap<Int, Production>()
     private val invertedMap = HashMap<Production, Int>()
-    private val acceptProduction: Production
 
     init {
         productions.mapIndexed { index, value ->
             productionMap[index] = value
             invertedMap.put(value, index)
         }
-        acceptProduction = productions.first().clone()
     }
 
     fun build(cc: Graph<CanonicalCluster, CanonicalClusterEdge>): LRTable {
@@ -32,14 +30,14 @@ class LRAnalyzerBuilder(productions: Set<Production>) {
             val outEdge = cc.outgoingEdgesOf(it)
             outEdge.forEach { e ->
                 if (e.symbol is NonTerminator) {
-                    analyseTable.addGoto(e.symbol, e.target.ccId)
+                    analyseTable.addGoto(Pair(it.ccId, e.symbol), e.target.ccId)
                 } else {
                     analyseTable.addAction(Pair(it.ccId, e.symbol), LRAction(Action.SHIFT, e.target.ccId))
                 }
             }
             it.item.forEach { c ->
                 if (c.production.body.projectState == ProjectState.REDUCE) {
-                    if (c.production.hashCode() == productionMap[0]!!.hashCode()) {
+                    if (c.production.hashCode() == acceptProduction.hashCode()) {
                         analyseTable.addAction(
                             Pair(it.ccId, EOF()),
                             LRAction(Action.ACCEPT, invertedMap[c.production.initProduction()]!!)

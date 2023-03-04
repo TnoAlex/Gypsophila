@@ -14,8 +14,9 @@ class CanonicalClusterBuilder(entryPoint: Production, productionList: List<Produ
             .buildGraph()!!
 
     private val firstMap = HashMap<Production, HashSet<Terminator>>()
-    private val productions = ArrayList<Production>()
+    val productions = ArrayList<Production>()
     private var currentCc = 0
+    val broadeningSyntax: Production
 
 
     private fun addNode(cluster: CanonicalCluster) {
@@ -33,6 +34,7 @@ class CanonicalClusterBuilder(entryPoint: Production, productionList: List<Produ
                 ProductionBody(listOf(entryPoint.head.content))
             )
         )
+        broadeningSyntax = t.first().clone()
         t.addAll(productionList)
         t.forEach { productions.add(it.clone()) }
         val current = CanonicalCluster(follow(t), currentCc)
@@ -63,8 +65,11 @@ class CanonicalClusterBuilder(entryPoint: Production, productionList: List<Produ
         preAdvance.forEach { (k, v) ->
             val newCc = HashSet<CanonicalClusterItem>(8)
             newCc.add(k)
-            val newProductions = productions.filter { it.head.content == k.production.body.current() }
-            newCc.addAll(follow(newProductions, k))
+            val newProductions = ArrayList<Production>()
+            if (k.production.body.current() is NonTerminator) {
+                productions.filter { it.head.content == k.production.body.current() }
+                newCc.addAll(follow(newProductions, k))
+            }
             val t = CanonicalCluster(newCc, currentCc)
             if (!ccGraph.vertexSet().contains(t))
                 res.add(t)
@@ -149,19 +154,20 @@ class CanonicalClusterBuilder(entryPoint: Production, productionList: List<Produ
                 res[list[i]] = hashSetOf(EOF())
             else {
                 rightList.forEach {
-                    if (it.body.stringEnd()) {
+                    if (it.body.currentNext() == null) {
                         if (res[it] != null) {
                             res[list[i]] ?: res.put(list[i], res[it]!!)?.addAll(res[it]!!)
                         } else {
                             incompleteMap[list[i]] = it
                         }
-                    } else if (it.body.current() is NonTerminator) {
+                    } else if (it.body.currentNext() is NonTerminator) {
                         val t = HashSet<Symbol>(8)
-                        list.filter { l -> l.head.content == it.body.current() }
+                        list.filter { l -> l.head.content == it.body.currentNext() }
                             .forEach { p -> t.addAll(firstMap[p]!!) }
                         res[list[i]] ?: res.put(list[i], t)?.addAll(t)
                     } else {
-                        res[list[i]] ?: res.put(list[i], hashSetOf(it.body.current()))?.add(it.body.current())
+                        res[list[i]] ?: res.put(list[i], hashSetOf(it.body.currentNext()!!))
+                            ?.add(it.body.currentNext()!!)
                     }
                 }
             }
