@@ -115,6 +115,17 @@ class CanonicalClusterBuilder(entryPoint: Production, productionList: List<Produ
             v.addAll(firstSet)
             sameLeft.values.forEach { it.addAll(firstSet) }
         }
+        productionList.filter { !firstMap.keys.contains(it) }.forEach {
+            val firstSet = HashSet<Terminator>()
+            val sameLeft = firstMap.filter { (k, _) -> k.head == it.head }
+            if (sameLeft.isEmpty()) {
+                log.error("$it -> The production cannot find the first set")
+                throw RuntimeException("Unparseable syntax")
+            } else {
+                sameLeft.values.forEach { v -> firstSet.addAll(v) }
+                firstMap[it] = firstSet
+            }
+        }
     }
 
     /**
@@ -155,14 +166,22 @@ class CanonicalClusterBuilder(entryPoint: Production, productionList: List<Produ
                 }
             }
         }
+        val deepDependenceIncomplete = HashMap<Production, Production>()
         if (incompleteMap.isNotEmpty()) {
             incompleteMap.forEach { (k, v) ->
-                if (res[v] == null) {
-                    log.error("An unrecoverable error occurred during the parser build process")
-                    throw RuntimeException("Null generated references")
+                if (res[v] != null) {
+                    res[k] ?: res.put(k, res[v]!!)?.addAll(res[v]!!)
+                } else {
+                    deepDependenceIncomplete[k] = v
                 }
-                res[k] ?: res.put(k, res[v]!!)?.addAll(res[v]!!)
             }
+        }
+        deepDependenceIncomplete.forEach { (k, v) ->
+            if (res[v] == null) {
+                log.error("$k -> This production cannot build a follow collection")
+                throw RuntimeException("Null generated references")
+            }
+            res[k] ?: res.put(k, res[v]!!)?.addAll(res[v]!!)
         }
         return res.map { CanonicalClusterItem(it.key, it.value) }.toSet()
     }

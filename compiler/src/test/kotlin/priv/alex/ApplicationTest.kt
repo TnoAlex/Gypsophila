@@ -1,6 +1,7 @@
 package priv.alex
 
 import priv.alex.code.CodeFile
+import priv.alex.gui.CcGraphAdapter
 import priv.alex.gui.RegexGraphAdapter
 import priv.alex.io.LexicalReader
 import priv.alex.io.ParserReader
@@ -54,6 +55,9 @@ private fun testParser() {
     val reader = ParserReader(File("F:\\testC\\parser.yml"))
     val res = reader.readParser()
     val builder = CanonicalClusterBuilder(res.first, res.second)
-    builder.build()
+    val jFrame = CcGraphAdapter(builder.build())
+    jFrame.defaultCloseOperation = JFrame.EXIT_ON_CLOSE
+    jFrame.pack()
+    jFrame.isVisible = true
     println()
 }
