@@ -37,7 +37,7 @@ class LRAnalyzerBuilder(productions: Set<Production>, private val acceptProducti
             }
             it.item.forEach { c ->
                 if (c.production.body.projectState == ProjectState.REDUCE) {
-                    if (c.production.hashCode() == acceptProduction.hashCode()) {
+                    if (c.production.body.content == acceptProduction.body.content && c.production.head == acceptProduction.head) {
                         analyseTable.addAction(
                             Pair(it.ccId, EOF()),
                             LRAction(Action.ACCEPT, invertedMap[c.production.initProduction()]!!)

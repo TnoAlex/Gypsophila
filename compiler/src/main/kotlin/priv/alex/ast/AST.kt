@@ -5,7 +5,7 @@ import org.jgrapht.graph.DefaultDirectedGraph
 import org.jgrapht.graph.DefaultEdge
 
 class AST {
-    private val graph: Graph<ASTNode, DefaultEdge> = DefaultDirectedGraph(DefaultEdge::class.java)
+     val graph: Graph<ASTNode, DefaultEdge> = DefaultDirectedGraph(DefaultEdge::class.java)
 
     fun addChild(baseNode: ASTNode?, child: ASTNode) {
         graph.addVertex(child)

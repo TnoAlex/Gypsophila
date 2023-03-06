@@ -5,17 +5,17 @@ import com.mxgraph.swing.mxGraphComponent
 import com.mxgraph.util.mxConstants
 import org.jgrapht.Graph
 import org.jgrapht.ext.JGraphXAdapter
+import org.jgrapht.graph.DefaultEdge
 import org.jgrapht.graph.DefaultListenableGraph
 import org.jgrapht.graph.builder.GraphTypeBuilder
-import priv.alex.parser.engine.cc.CanonicalCluster
-import priv.alex.parser.engine.cc.CanonicalClusterEdge
+import priv.alex.ast.ASTNode
 import java.awt.Dimension
 import javax.swing.JFrame
 
-class CcGraphAdapter(graph: Graph<CanonicalCluster, CanonicalClusterEdge>) : JFrame() {
+class ASTAdapter(graph: Graph<ASTNode, DefaultEdge>) : JFrame() {
     init {
         val listenableGraph = DefaultListenableGraph(
-            GraphTypeBuilder.directed<CanonicalCluster, CanonicalClusterEdge>().allowingMultipleEdges(true)
+            GraphTypeBuilder.directed<ASTNode, AdapterEdge>().allowingMultipleEdges(true)
                 .allowingSelfLoops(true)
                 .weighted(false)
                 .buildGraph()!!
@@ -40,7 +40,7 @@ class CcGraphAdapter(graph: Graph<CanonicalCluster, CanonicalClusterEdge>) : JFr
             listenableGraph.addVertex(v)
         }
         for (e in graph.edgeSet()) {
-            listenableGraph.addEdge(e.source, e.target, e)
+            listenableGraph.addEdge(graph.getEdgeSource(e), graph.getEdgeTarget(e), AdapterEdge(""))
         }
 
         val layout = mxFastOrganicLayout(adapter)

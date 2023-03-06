@@ -1,6 +1,7 @@
 package priv.alex
 
 import priv.alex.code.CodeFile
+import priv.alex.gui.ASTAdapter
 import priv.alex.gui.CcGraphAdapter
 import priv.alex.gui.RegexGraphAdapter
 import priv.alex.io.LexicalReader
@@ -16,7 +17,7 @@ import java.io.File
 import javax.swing.JFrame
 
 fun main() {
-    testLrAnalyzer()
+    testLrAnalyzer()/**/
 //    testParser()
 //    testDFA()
 //    codeReaderTest()
@@ -65,9 +66,9 @@ private fun testParser() {
 }
 
 private fun testLrAnalyzer() {
-    val code = CodeFile(File("F:\\testC\\scratch_1.cc"))
+    val code = CodeFile(File("F:\\testC\\test.cc"))
     val lexicalReader = LexicalReader(File("F:\\testC\\scratch.yml"))
-    val parserReader = ParserReader(File("F:\\testC\\parser.yml"))
+    val parserReader = ParserReader(File("F:\\testC\\test.yml"))
     val lexer = lexicalReader.readLexicon()
     val syntax = parserReader.readParser()
     val tokenLines = ArrayList<TokenLine>()
@@ -78,7 +79,11 @@ private fun testLrAnalyzer() {
     val tokenFile = TokenFile(tokenLines, code.fileName)
     val builder = CanonicalClusterBuilder(syntax.first, syntax.second)
     val cc = builder.build()
-    val analyser = LRAnalyzer(builder.productions.toSet(), cc, builder.broadeningSyntax)
+    val analyser = LRAnalyzer(builder.productions.toSet(), cc, builder.acceptProduction)
     val ast = analyser.analyze(tokenFile)
+    val jFrame = ASTAdapter(ast.graph)
+    jFrame.defaultCloseOperation = JFrame.EXIT_ON_CLOSE
+    jFrame.pack()
+    jFrame.isVisible = true
     println()
 }

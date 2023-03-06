@@ -38,9 +38,9 @@ class ParserReader(file: File) : Reader {
             it as String
             it.split(" ").forEach { s ->
                 if (NonTerminator.isNonTerminator(s))
-                    symbols.add(Terminator(s))
-                else
                     symbols.add(NonTerminator(s))
+                else
+                    symbols.add(Terminator(s))
             }
         }
         val entryPoint = Production(entryPointHead, ProductionBody(symbols))

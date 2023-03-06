@@ -28,6 +28,7 @@ data class CanonicalCluster(val item: Set<CanonicalClusterItem>, val ccId: Int) 
 
     override fun toString(): String {
         val builder = StringBuilder()
+        builder.append(ccId).append("\n")
         item.forEach {
             builder.append(it).append("\n")
         }

@@ -117,6 +117,9 @@ class CodeReader(private val file: File) : Reader {
                     }
                 }
             }
+            if (!overflowBuffer.all { it.toInt() == 0 }) {
+                lines.add(CodeLine(lines.lastIndex + 1, String(overflowBuffer).trim()))
+            }
         } catch (e: Exception) {
             log.error("An accident occurred during the read")
             throw RuntimeException(e.message, e.cause)

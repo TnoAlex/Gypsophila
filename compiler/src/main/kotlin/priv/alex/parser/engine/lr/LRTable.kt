@@ -34,9 +34,7 @@ class LRTable {
     }
 
     fun addAction(state: Pair<Int, Symbol>, action: LRAction) {
-        if (actions.keys.contains(state))
-            println()
-        actions[state] = action
+        actions[state] ?: actions.put(state, action)
     }
 
     fun action(state: Int, token: Token?): Pair<LRAction, Symbol>? {
