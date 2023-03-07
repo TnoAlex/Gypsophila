@@ -7,6 +7,7 @@ import priv.alex.lexer.token.Token
 import priv.alex.lexer.token.TokenFile
 import priv.alex.logger.Logger
 import priv.alex.parser.EOF
+import priv.alex.parser.NonTerminator
 import priv.alex.parser.Production
 import priv.alex.parser.Symbol
 import priv.alex.parser.engine.cc.CanonicalCluster
@@ -77,19 +78,27 @@ class LRAnalyzer(
             log.info("The current syntax cannot parse this token sequence")
             throw RuntimeException("Syntax  mismatch")
         }
-        //清空分析栈
+//清空分析栈
         return ast
     }
 
     private fun reduce(action: Pair<LRAction, Symbol>) {
         val production = productionMap[action.first.actionTarget]!!
-        val node = ASTNode(Pair(production.head.content, null))
-        ast.addChild(null, node)
-        production.body.content.forEach { _ ->
-            analyseStack.pop()
-            symbolStack.pop()
-            ast.addChild(node, astStack.pop())
+        if (production.head.content != NonTerminator("<EMPTY>")) {
+            val node = ASTNode(Pair(production.head.content, null))
+            ast.addChild(null, node)
+            if (production.body.content.all { it != NonTerminator("<EMPTY>") }) {
+                production.body.content.forEach { _ ->
+                    analyseStack.pop()
+                    symbolStack.pop()
+                    ast.addChild(node, astStack.pop())
+                }
+            }
+            symbolStack.push(Pair(production.head.content, null))
+            astStack.push(node)
         }
+        if (production.body.content.all { it == NonTerminator("<EMPTY>") })
+            analyseStack.pop()
         if (production != acceptProduction) {
             val goto = analyseTable.goto(analyseStack.peek(), production.head.content) ?: let {
                 log.error("The GOTO target cannot be obtained through the current generation during the reduce process")
@@ -97,8 +106,6 @@ class LRAnalyzer(
             }
             analyseStack.push(goto)
         }
-        symbolStack.push(Pair(production.head.content, null))
-        astStack.push(node)
     }
 
 }

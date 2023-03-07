@@ -66,13 +66,13 @@ class CanonicalClusterBuilder(entryPoint: Production, productionList: List<Produ
         val newProductions = HashSet<Production>(16)
         list.forEach {
             if (it.body.current() is NonTerminator) {
-                newProductions.addAll(productions.filter { p -> p.head.content == it.body.current() && p != it })
+                newProductions.addAll(productions.filter { p -> p.head.content == it.body.current() })
                 var size = 0
                 while (size != newProductions.size) {
                     val t = ArrayList<Production>(32)
                     size = newProductions.size
                     newProductions.forEach { p ->
-                        t.addAll(productions.filter { fp -> fp.head.content == p.body.current() && p != fp })
+                        t.addAll(productions.filter { fp -> fp.head.content == p.body.current() })
                     }
                     newProductions.addAll(t)
                 }
@@ -202,7 +202,16 @@ class CanonicalClusterBuilder(entryPoint: Production, productionList: List<Produ
                     } else if (r.body.currentNext() is NonTerminator) {
                         val first = HashSet<Symbol>(16)
                         productions.filter { pro -> pro.head.content == r.body.currentNext() }.forEach { p ->
-                            first.addAll(firstMap[p]!!)
+                            if (firstMap[p]!!.contains(EmptySymbol())) {
+                                if (res[p] == null)
+                                    incomplete.add(it)
+                                else {
+                                    first.addAll(firstMap[p]!!.filter { f -> f != EmptySymbol() })
+                                    first.addAll(res[r]!!)
+                                }
+                            } else {
+                                first.addAll(firstMap[p]!!)
+                            }
                         }
                         res[it] ?: res.put(it, first)
                         res[it]?.addAll(first)

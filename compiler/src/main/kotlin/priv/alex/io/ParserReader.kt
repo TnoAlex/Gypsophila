@@ -48,18 +48,23 @@ class ParserReader(file: File) : Reader {
         (yaml[1] as Map<*, *>).forEach { (k, v) ->
             k as String
             val head = ProductionHead(NonTerminator(k))
-            v as List<*>
-            v.forEach {
-                val symbol = ArrayList<Symbol>(4)
-                it as String
-                it.split(" ").forEach { s ->
-                    if (NonTerminator.isNonTerminator(s))
-                        symbol.add(NonTerminator(s))
-                    else
-                        symbol.add(Terminator(s))
+            if (k == "<EMPTY>") {
+                res.add(Production(head, EmptyProductionBody()))
+            } else {
+                v as List<*>
+                v.forEach {
+                    val symbol = ArrayList<Symbol>(4)
+                    it as String
+                    it.split(" ").forEach { s ->
+                        if (NonTerminator.isNonTerminator(s))
+                            symbol.add(NonTerminator(s))
+                        else
+                            symbol.add(Terminator(s))
+                    }
+                    res.add(Production(head, ProductionBody(symbol)))
                 }
-                res.add(Production(head, ProductionBody(symbol)))
             }
+
         }
         return Pair(entryPoint, res.toList())
     }

@@ -1,13 +1,10 @@
 package priv.alex.parser
 
-data class ProductionBody(val content: List<Symbol>) : Cloneable {
+open class ProductionBody(val content: List<Symbol>) : Cloneable {
 
     var projectState = ProjectState.SHIFT
-        private set
-
     var projectPos = 0
     var endProject = false
-        private set
 
     fun advance(): Symbol {
         return if (projectPos == content.size) {
@@ -39,13 +36,6 @@ data class ProductionBody(val content: List<Symbol>) : Cloneable {
         else {
             content[projectPos + 1]
         }
-    }
-
-    fun currentFirst(): Symbol? {
-        if (projectPos == 0)
-            return null
-        else
-            return content[projectPos - 1]
     }
 
     public override fun clone(): ProductionBody {
@@ -85,8 +75,15 @@ data class ProductionBody(val content: List<Symbol>) : Cloneable {
     fun initState(): ProductionBody {
         val res = clone()
         res.projectPos = 0
-        res.projectState = ProjectState.SHIFT
-        res.endProject = false
+        if (content.all { it == EmptySymbol() }) {
+            res.projectState = ProjectState.REDUCE
+            res.endProject = true
+            res.projectPos = content.size
+        } else {
+            res.projectState = ProjectState.SHIFT
+            res.endProject = false
+        }
+
         return res
     }
 
