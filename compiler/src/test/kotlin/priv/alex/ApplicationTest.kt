@@ -17,8 +17,8 @@ import java.io.File
 import javax.swing.JFrame
 
 fun main() {
-    testLrAnalyzer()/**/
-//    testParser()
+//    testLrAnalyzer()/**/
+    testParser()
 //    testDFA()
 //    codeReaderTest()
 //    nfaBuilderTest()
@@ -55,7 +55,7 @@ private fun testDFA() {
 }
 
 private fun testParser() {
-    val reader = ParserReader(File("F:\\testC\\test.yml"))
+    val reader = ParserReader(File("F:\\testC\\parser.yml"))
     val res = reader.readParser()
     val builder = CanonicalClusterBuilder(res.first, res.second)
     val jFrame = CcGraphAdapter(builder.build())

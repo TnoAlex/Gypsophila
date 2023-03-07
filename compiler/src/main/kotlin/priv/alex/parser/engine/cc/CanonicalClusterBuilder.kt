@@ -54,9 +54,16 @@ class CanonicalClusterBuilder(entryPoint: Production, productionList: List<Produ
         log.info("Try to build canonical cluster")
         val ccQueue = ArrayDeque<CanonicalCluster>()
         ccQueue.add(ccGraph.vertexSet().first())
+        val vertexSet = HashSet<CanonicalCluster>(64)
+        vertexSet.add(ccGraph.vertexSet().first())
         while (ccQueue.isNotEmpty()) {
             val newCcs = advance(ccQueue.removeFirst())
-            ccQueue.addAll(newCcs)
+            newCcs.forEach {
+                if (!ccQueue.contains(it) && !vertexSet.contains(it)) {
+                    ccQueue.add(it)
+                    vertexSet.add(it)
+                }
+            }
         }
         log.info("Done")
         return ccGraph
@@ -102,7 +109,8 @@ class CanonicalClusterBuilder(entryPoint: Production, productionList: List<Produ
                 newCc.addAll(follow(newProductions, newCc.toList()))
             }
             val c = addNode(newCc)
-            res.add(c)
+            if (newCc == c.item)
+                res.add(c)
             val edge = ccGraph.getEdge(baseNode, c)
             if (edge == null || edge.symbol != k)
                 ccGraph.addEdge(baseNode, c, CanonicalClusterEdge(k))
@@ -114,52 +122,89 @@ class CanonicalClusterBuilder(entryPoint: Production, productionList: List<Produ
      * 求取first集
      */
     private fun first(productionList: List<Production>) {
-        for (i in productionList.indices) {
-            if (productionList[i].body.content.first() is Terminator) {
-                firstMap[productionList[i]] ?: firstMap.put(
-                    productionList[i],
-                    hashSetOf(productionList[i].body.content.first() as Terminator)
-                )?.add(productionList[i].body.content.first() as Terminator)
-            } else {
-                var nextSymbol = productionList[i]
-                val symbolQueue = ArrayDeque<Production>(8)
-                val allSymbol = ArrayList<Production>(32)
-                while (nextSymbol.body.content.first() is NonTerminator) {
-                    productionList.filter { it.head.content == nextSymbol.body.content.first() && it != productionList[i] }
-                        .forEach {
-                            if (it.body.content.first() is Terminator) {
-                                firstMap[productionList[i]]?.add(it.body.content.first() as Terminator)
-                                    ?: firstMap.put(
-                                        productionList[i],
-                                        hashSetOf(it.body.content.first() as Terminator)
-                                    )
-                            } else {
-                                if (!allSymbol.contains(it)) {
-                                    symbolQueue.add(it)
-                                    allSymbol.add(it)
+        val res = HashMap<NonTerminator, HashSet<Terminator>>(32)
+        val empty = HashSet<Symbol>(8)
+        productionList.forEach {
+            if (it.body.current() == NonTerminator("<EMPTY>") || it.body.content.first() == EmptySymbol())
+                empty.add(it.head.content)
+        }
+        res[NonTerminator("<EMPTY>")] = hashSetOf(EmptySymbol())
+        val list = productionList.filter { it.head.content != NonTerminator("<EMPTY>") }
+        var change = true
+        while (change) {
+            change = false
+            list.forEach {
+                if (it.body.current() is Terminator) {
+                    if (res[it.head.content] == null) {
+                        res[it.head.content] = hashSetOf(it.body.current() as Terminator)
+                        change = true
+                    } else {
+                        if (!res[it.head.content]!!.contains((it.body.current()))) {
+                            res[it.head.content]?.add(it.body.current() as Terminator)
+                            change = true
+                        }
+                    }
+
+                } else {
+                    if (empty.contains(it.body.current())) {
+                        val tSet = HashSet<Symbol>(8)
+                        for (i in it.body.content) {
+                            if (!empty.contains(i)) {
+                                tSet.add(i)
+                                break
+                            } else
+                                tSet.add(i)
+                        }
+                        if (tSet.size == it.body.content.size) {
+                            if (it.body.content.all { s -> res[s] != null }) {
+                                it.body.content.forEach { s ->
+                                    if (res[it.head.content] == null) {
+                                        res[it.head.content] = HashSet(res[s]!!)
+                                        change = true
+                                    } else {
+                                        if (!res[it.head.content]!!.containsAll(res[s]!!)) {
+                                            res[it.head.content]?.addAll(res[s]!!)
+                                            change = true
+                                        }
+                                    }
+
+                                }
+                            }
+                        } else {
+                            if (tSet.all { s -> res[s] != null }) {
+                                tSet.forEach { s ->
+                                    if (res[it.head.content] == null) {
+                                        res[it.head.content] = res[s]!!.filter { f -> f != EmptySymbol() }.toHashSet()
+                                        change = true
+                                    } else {
+                                        val t = res[s]!!.filter { f -> f != EmptySymbol() }.toHashSet()
+                                        if (!res[it.head.content]!!.containsAll(t)) {
+                                            res[it.head.content]?.addAll(t)
+                                            change = true
+                                        }
+                                    }
                                 }
                             }
                         }
-                    nextSymbol = symbolQueue.removeFirstOrNull() ?: break
+                    } else {
+                        if (res[it.body.current()] != null) {
+                            if (res[it.head.content] == null) {
+                                res[it.head.content] = HashSet(res[it.body.current()]!!)
+                                change = true
+                            } else {
+                                if (!res[it.head.content]!!.containsAll(res[it.body.current()]!!)) {
+                                    res[it.head.content]?.addAll(res[it.body.current()]!!)
+                                    change = true
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
-        firstMap.forEach { (k, v) ->
-            val firstSet = HashSet<Terminator>(v)
-            val sameLeft = firstMap.filter { it.key.head == k.head }
-            sameLeft.values.forEach { firstSet.addAll(it) }
-            v.addAll(firstSet)
-            sameLeft.values.forEach { it.addAll(firstSet) }
-        }
-        productionList.filter { !firstMap.keys.contains(it) }.forEach {
-            val firstSet = HashSet<Terminator>()
-            val sameLeft = firstMap.filter { (k, _) -> k.head == it.head }
-            if (sameLeft.isEmpty()) {
-                log.error("$it -> The production cannot find the first set")
-                throw RuntimeException("Unparseable syntax")
-            } else {
-                sameLeft.values.forEach { v -> firstSet.addAll(v) }
-                firstMap[it] = firstSet
+        res.forEach { (k, v) ->
+            productionList.filter { it.head.content == k }.forEach {
+                firstMap[it] = v
             }
         }
     }
