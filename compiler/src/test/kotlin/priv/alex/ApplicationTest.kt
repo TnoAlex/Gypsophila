@@ -57,7 +57,7 @@ private fun testParser() {
 private fun testLrAnalyzer() {
     val code = CodeFile(File("F:\\testC\\scratch_1.cc"))
     val lexicalReader = LexicalReader(File("F:\\testC\\scratch.yml"))
-    val parserReader = ParserReader(File("F:\\testC\\test.yml"))
+    val parserReader = ParserReader(File("F:\\testC\\test1.yml"))
     val lexer = lexicalReader.readLexicon()
     val syntax = parserReader.readParser()
     val tokenLines = ArrayList<TokenLine>()
