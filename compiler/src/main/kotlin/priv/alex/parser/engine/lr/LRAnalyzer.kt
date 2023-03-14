@@ -46,6 +46,7 @@ class LRAnalyzer(
             while (index < it.tokens.size) {
                 val action = analyseTable.action(analyseStack.peek(), token[index]) ?: let {
                     log.error("The parser cannot understand this token, please check whether the lexical used matches the syntax")
+                    log.debug("Analyze Stack roof is ${analyseStack.peek()},token is ${token[index]}")
                     throw RuntimeException("Incomprehensible tokens")
                 }
                 if (action.first.action == Action.SHIFT) {

@@ -13,7 +13,7 @@ class CanonicalClusterBuilder(entryPoint: Production, productionList: List<Produ
             .allowingSelfLoops(true).weighted(false)
             .buildGraph()!!
 
-    private val firstMap = HashMap<Production, HashSet<Terminator>>()
+    private val firstMap = HashMap<Symbol, HashSet<Terminator>>()
     val productions = ArrayList<Production>()
     private var currentCc = 0
     val acceptProduction: Production
@@ -43,11 +43,9 @@ class CanonicalClusterBuilder(entryPoint: Production, productionList: List<Produ
         acceptProduction = t.first().clone()
         t.addAll(productionList)
         t.forEach { productions.add(it.clone()) }
-        val startProduction = HashSet<Production>(8)
-        startProduction.add(acceptProduction)
-        startProduction.addAll(closure(listOf(acceptProduction)))
-        val current = follow(startProduction)
-        addNode(current)
+        val initCc = closure(CanonicalClusterItem(acceptProduction, hashSetOf(EOF())))
+        initCc.add(CanonicalClusterItem(acceptProduction, hashSetOf(EOF())))
+        addNode(initCc)
     }
 
     fun build(): Graph<CanonicalCluster, CanonicalClusterEdge> {
@@ -69,25 +67,89 @@ class CanonicalClusterBuilder(entryPoint: Production, productionList: List<Produ
         return ccGraph
     }
 
-    private fun closure(list: List<Production>): ArrayList<Production> {
+    private fun closure(initCc: CanonicalClusterItem): HashSet<CanonicalClusterItem> {
         val newProductions = HashSet<Production>(16)
-        list.forEach {
-            if (it.body.current() is NonTerminator) {
-                newProductions.addAll(productions.filter { p -> p.head.content == it.body.current() })
-                var size = 0
-                while (size != newProductions.size) {
-                    val t = ArrayList<Production>(32)
-                    size = newProductions.size
-                    newProductions.forEach { p ->
-                        t.addAll(productions.filter { fp -> fp.head.content == p.body.current() })
+        val initProduction = initCc.production
+        val res = HashMap<Production, HashSet<Symbol>>(16)
+        if (initProduction.body.current() is NonTerminator) {
+            newProductions.addAll(productions.filter { p -> p.head.content == initProduction.body.current() })
+            lookBackSymbols(initCc, newProductions).forEach { (k, v) ->
+                res[k]?.let { res[k]?.addAll(v) } ?: res.put(k, v)
+            }
+            val allP = HashSet<Production>(32)
+            while (newProductions.isNotEmpty()) {
+                val next = HashSet<Production>(32)
+                newProductions.forEach { p ->
+                    val t = HashSet<Production>(8)
+                    t.addAll(productions.filter { fp -> fp.head.content == p.body.current() })
+                    if (t.isNotEmpty()) {
+                        val tt = res.keys.first { it == p }
+                        lookBackSymbols(CanonicalClusterItem(tt, res[tt]!!), t).forEach { (k, v) ->
+                            res[k]?.let { res[k]?.addAll(v) } ?: res.put(k, v)
+                        }
+                        next.addAll(t.filter { s -> !allP.contains(s) })
+                        allP.addAll(next)
                     }
-                    newProductions.addAll(t)
+                }
+                newProductions.clear()
+                newProductions.addAll(next)
+            }
+        }
+        res.forEach { (k, _) ->
+            val sameLeft = res.filter { it.key.head == k.head }
+            if (sameLeft.size <= 1)
+                return@forEach
+            else {
+                sameLeft.forEach {
+                    lookBackSymbols(
+                        CanonicalClusterItem(it.key, it.value),
+                        HashSet(sameLeft.filter { s -> s.key != it.key }.keys)
+                    ).forEach { (k, v) ->
+                        res[k]?.let { res[k]?.addAll(v) } ?: res.put(k, v)
+                    }
                 }
             }
         }
-        if (newProductions.isEmpty())
-            return ArrayList()
-        return ArrayList(newProductions)
+        return res.map { CanonicalClusterItem(it.key, it.value) }.toHashSet()
+    }
+
+    private fun lookBackSymbols(
+        initCc: CanonicalClusterItem,
+        closure: HashSet<Production>
+    ): HashMap<Production, HashSet<Symbol>> {
+        val newCc = HashMap<Production, HashSet<Symbol>>(closure.size + 1)
+        if (initCc.production.body.currentNext() == null) {
+            closure.forEach { newCc[it] = initCc.sc }
+        }
+        if (initCc.production.body.currentNext() is Terminator) {
+            closure.forEach { newCc[it] = hashSetOf(initCc.production.body.currentNext()!!) }
+        }
+        if (initCc.production.body.currentNext() is NonTerminator) {
+            val content = initCc.production.body.content
+            val pos = initCc.production.body.projectPos + 1
+            val sc = HashSet<Symbol>()
+            var flag = false
+            for (i in pos until content.size) {
+                if (content[i] is Terminator) {
+                    sc.add(content[i])
+                    flag = true
+                    break
+                } else {
+                    if (!firstMap[content[i]]!!.contains(EmptySymbol())) {
+                        sc.addAll(firstMap[content[i]]!!)
+                        flag = true
+                        break
+                    } else {
+                        sc.addAll(firstMap[content[i]]!!.filter { it != EmptySymbol() })
+                    }
+                }
+            }
+            if (!flag) {
+                sc.addAll(initCc.sc)
+            }
+            closure.forEach { newCc[it] = sc }
+        }
+        return newCc
     }
 
     private fun advance(baseNode: CanonicalCluster): HashSet<CanonicalCluster> {
@@ -102,15 +164,14 @@ class CanonicalClusterBuilder(entryPoint: Production, productionList: List<Produ
         }
         preAdvance.forEach { (k, v) ->
             val newCc = HashSet<CanonicalClusterItem>(32)
-            val newProductions = HashSet<Production>(32)
-            newProductions.addAll(closure(v.map { it.production }))
-            newCc.addAll(v)
-            if (newProductions.isNotEmpty()) {
-                newCc.addAll(follow(newProductions, newCc.toList()))
+            v.forEach {
+                val ccItem = closure(it)
+                if (ccItem.isNotEmpty())
+                    newCc.addAll(ccItem)
+                newCc.add(it)
             }
             val c = addNode(newCc)
-            if (newCc == c.item)
-                res.add(c)
+            res.add(c)
             val edge = ccGraph.getEdge(baseNode, c)
             if (edge == null || edge.symbol != k)
                 ccGraph.addEdge(baseNode, c, CanonicalClusterEdge(k))
@@ -203,78 +264,7 @@ class CanonicalClusterBuilder(entryPoint: Production, productionList: List<Produ
             }
         }
         res.forEach { (k, v) ->
-            productionList.filter { it.head.content == k }.forEach {
-                firstMap[it] = v
-            }
+            firstMap[k] = v
         }
     }
-
-    /**
-     * 求取follow集
-     */
-    private fun follow(
-        list: HashSet<Production>,
-        initCC: List<CanonicalClusterItem>? = null
-    ): Set<CanonicalClusterItem> {
-        val res = HashMap<Production, HashSet<Symbol>>(list.size)
-        val lists = HashSet<Production>(list)
-        val incomplete = HashSet<Production>(8)
-        initCC?.let {
-            it.forEach { c ->
-                res[c.production] = c.sc
-                lists.add(c.production)
-            }
-        }
-
-        lists.forEach {
-            if ((initCC != null) && initCC.map { i -> i.production }.contains(it)) {
-                return@forEach
-            }
-            val left = it.head
-            val right = lists.filter { p -> p.body.current() == left.content }
-            if (right.isEmpty()) {
-                res[it] = hashSetOf(EOF())
-            } else {
-                right.forEach { r ->
-                    if (r.body.currentNext() == null) {
-                        if (res[r] == null)
-                            incomplete.add(it)
-                        else {
-                            res[it] ?: res.put(it, res[r]!!)
-                            res[it]?.addAll(res[r]!!)
-                        }
-
-                    } else if (r.body.currentNext() is NonTerminator) {
-                        val first = HashSet<Symbol>(16)
-                        productions.filter { pro -> pro.head.content == r.body.currentNext() }.forEach { p ->
-                            if (firstMap[p]!!.contains(EmptySymbol())) {
-                                if (res[p] == null)
-                                    incomplete.add(it)
-                                else {
-                                    first.addAll(firstMap[p]!!.filter { f -> f != EmptySymbol() })
-                                    first.addAll(res[r]!!)
-                                }
-                            } else {
-                                first.addAll(firstMap[p]!!)
-                            }
-                        }
-                        res[it] ?: res.put(it, first)
-                        res[it]?.addAll(first)
-                    } else {
-                        res[it] ?: res.put(it, hashSetOf(r.body.currentNext()!!))
-                        res[it]?.add(r.body.currentNext()!!)
-                    }
-                }
-            }
-        }
-        if (incomplete.isNotEmpty()) {
-            val cc = follow(incomplete, res.map { CanonicalClusterItem(it.key, it.value) })
-            cc.forEach {
-                res[it.production] = it.sc
-            }
-        }
-        return res.map { CanonicalClusterItem(it.key, it.value) }.toSet()
-    }
-
-
 }

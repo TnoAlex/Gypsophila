@@ -16,21 +16,10 @@ import priv.alex.parser.engine.lr.LRAnalyzer
 import java.io.File
 import javax.swing.JFrame
 
+
 fun main() {
-//    testLrAnalyzer()/**/
-    testParser()
-//    testDFA()
-//    codeReaderTest()
-//    nfaBuilderTest()
-//    val nfa  = NFA("a([a-z])*")
-//    val builder = DFABuilder(nfa)
-//    val jFrame = RegexGraphAdapter(builder.build())
-//    val  p = "\"[ -~]*\""
-//    val dfa = DFA(p)
-//    val jFrame = RegexGraphAdapter(dfa.dfa )
-//    jFrame.defaultCloseOperation = JFrame.EXIT_ON_CLOSE
-//    jFrame.pack()
-//    jFrame.isVisible = true
+//    testParser()
+    testLrAnalyzer()
 }
 
 private fun nfaBuilderTest() {
@@ -55,7 +44,7 @@ private fun testDFA() {
 }
 
 private fun testParser() {
-    val reader = ParserReader(File("F:\\testC\\parser.yml"))
+    val reader = ParserReader(File("F:\\testC\\test1.yml"))
     val res = reader.readParser()
     val builder = CanonicalClusterBuilder(res.first, res.second)
     val jFrame = CcGraphAdapter(builder.build())
@@ -66,7 +55,7 @@ private fun testParser() {
 }
 
 private fun testLrAnalyzer() {
-    val code = CodeFile(File("F:\\testC\\test.cc"))
+    val code = CodeFile(File("F:\\testC\\scratch_1.cc"))
     val lexicalReader = LexicalReader(File("F:\\testC\\scratch.yml"))
     val parserReader = ParserReader(File("F:\\testC\\test.yml"))
     val lexer = lexicalReader.readLexicon()
