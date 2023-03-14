@@ -1,6 +1,6 @@
 package priv.alex.gui
 
-import com.mxgraph.layout.mxFastOrganicLayout
+import com.mxgraph.layout.hierarchical.mxHierarchicalLayout
 import com.mxgraph.swing.mxGraphComponent
 import com.mxgraph.util.mxConstants
 import org.jgrapht.Graph
@@ -43,7 +43,7 @@ class CcGraphAdapter(graph: Graph<CanonicalCluster, CanonicalClusterEdge>) : JFr
             listenableGraph.addEdge(e.source, e.target, e)
         }
 
-        val layout = mxFastOrganicLayout(adapter)
+        val layout = mxHierarchicalLayout(adapter)
         layout.execute(adapter.defaultParent)
     }
 }
