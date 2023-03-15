@@ -31,6 +31,9 @@ class CanonicalClusterBuilder(entryPoint: Production, productionList: List<Produ
     }
 
     init {
+        if (productionList.size > 50) {
+            log.warn("Too many syntax rules, build time will be longer than expected")
+        }
         first(productionList)
         val appendProductionHead = NonTerminator(entryPoint.head.content.content.replace(">", "*>"))
         val t = ArrayList<Production>()
@@ -135,6 +138,8 @@ class CanonicalClusterBuilder(entryPoint: Production, productionList: List<Produ
                     flag = true
                     break
                 } else {
+                    if (firstMap[content[i]] == null)
+                        log.error("There is a problem with the syntax and the build fails")
                     if (!firstMap[content[i]]!!.contains(EmptySymbol())) {
                         sc.addAll(firstMap[content[i]]!!)
                         flag = true

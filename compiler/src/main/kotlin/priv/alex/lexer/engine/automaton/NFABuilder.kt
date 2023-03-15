@@ -64,10 +64,17 @@ internal class NFABuilder(pattern: String) : FABuilder() {
         while (true) {
             var branchFlag = false
 
-            if (token.type == OR){
+            if (token.type == CUTOFF) {
+                lexer.advance()
+                pos = expression(utilEnd)
+                graph.addEdge(utilEnd, pos.first, RegexEdge(true))
+                utilEnd = pos.second
+            }
+
+            if (token.type == OR) {
                 branchFlag = true
                 token = lexer.advance()
-            }else{
+            } else {
                 addNode()
                 graph.addEdge(utilEnd, currentNode, RegexEdge(true))
                 utilEnd = currentNode
@@ -87,7 +94,6 @@ internal class NFABuilder(pattern: String) : FABuilder() {
                     nextStart = pos.first
                     graph.addEdge(bifurcate,nextStart, RegexEdge(true))
                     graph.addEdge(pos.second,crossPos,RegexEdge(true))
-                    nextStart = bifurcate
                     utilEnd = crossPos
                 }
                 token = lexer.advance()
@@ -110,7 +116,6 @@ internal class NFABuilder(pattern: String) : FABuilder() {
                     graph.addEdge(bifurcate,nextStart, RegexEdge(true))
                     graph.addEdge(pos.second,crossPos,RegexEdge(true))
                     utilEnd = crossPos
-                    nextStart = bifurcate
                 }
             }
         }

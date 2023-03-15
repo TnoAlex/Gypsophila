@@ -29,11 +29,11 @@ class TokenBuilder(lexicons: HashMap<TokenType, ArrayList<Lexical>>) {
                 if (index + 1 < words.size) {
                     var tindex = index + 1
                     t += words[tindex]
-                    var token = classification(t, true)
-                    while (token.first && token.second == null && tindex< words.size){
+                    var token = classification(t)
+                    while (token.first && token.second == null && tindex < words.size) {
                         tindex++
                         t += words[tindex]
-                        token = classification(t,true)
+                        token = classification(t)
                     }
                     if (token.second == null) {
                         if (words[index] in operator.keys) {
@@ -55,8 +55,7 @@ class TokenBuilder(lexicons: HashMap<TokenType, ArrayList<Lexical>>) {
                                 )
                             )
                         }
-                    }
-                    else{
+                    } else {
                         res.add(Token(token.second!!.first, t, Pair(line.position, index), token.second!!.second))
                         index = tindex
                     }
@@ -83,65 +82,90 @@ class TokenBuilder(lexicons: HashMap<TokenType, ArrayList<Lexical>>) {
                     }
                 }
             } else {
-                val token = classification(words[index], false)
+                val token = classification(words[index])
                 if (!token.first) {
                     log.error("You have an error in your input;In line ${line.position},close to \'${words[index]}\'")
                     throw RuntimeException("Unrecognized symbol")
                 } else {
-                    res.add(
-                        Token(
-                            token.second!!.first,
-                            words[index],
-                            Pair(line.position, index),
-                            token.second!!.second
+                    var tt = words[index]
+                    var tindex = index + 1
+                    var ttoken = token
+                    while ((token.second == null || token.second!!.first == TokenType.LITERAL) && tindex < words.size) {
+                        tt += words[tindex]
+                        ttoken = classification(tt)
+                        tindex++
+                        if (ttoken.first && ttoken.second != null)
+                            break
+                    }
+                    if (!ttoken.first || ttoken.second == null || ttoken == token) {
+                        res.add(
+                            Token(
+                                token.second!!.first,
+                                words[index],
+                                Pair(line.position, index),
+                                token.second!!.second
+                            )
                         )
-                    )
+                    } else {
+                        res.add(
+                            Token(
+                                ttoken.second!!.first,
+                                tt,
+                                Pair(line.position, index),
+                                ttoken.second!!.second
+                            )
+                        )
+                        index = tindex
+                    }
                 }
             }
             index++
         }
-        return TokenLine(line.position,Collections.unmodifiableList(res))
+        return TokenLine(line.position, Collections.unmodifiableList(res))
     }
 
-    private fun classification(string: String, flag: Boolean): Pair<Boolean, Pair<TokenType, String>?> {
+    private fun classification(string: String): Pair<Boolean, Pair<TokenType, String>?> {
+        var state = false
 
         comment.forEach {
             val status = it.dfa!!.match(string)
             if (status == DFA.DFAStatus.ACCEPT)
                 return Pair(true, Pair(TokenType.COMMENT, it.name))
-            else if (status == DFA.DFAStatus.INCOMPLETE && flag)
-                return Pair(true, null)
+            else if (status == DFA.DFAStatus.INCOMPLETE)
+                state = true
         }
 
         literal.forEach {
             val status = it.dfa!!.match(string)
             if (status == DFA.DFAStatus.ACCEPT)
                 return Pair(true, Pair(TokenType.LITERAL, it.name))
-            else if (status == DFA.DFAStatus.INCOMPLETE && flag)
-                return Pair(true, null)
+            else if (status == DFA.DFAStatus.INCOMPLETE)
+                state = true
 
         }
         qualifier.forEach {
             val status = it.dfa!!.match(string)
             if (status == DFA.DFAStatus.ACCEPT) {
                 return Pair(true, Pair(TokenType.QUALIFIER, it.name))
-            } else if (status == DFA.DFAStatus.INCOMPLETE && flag)
-                return Pair(true, null)
+            } else if (status == DFA.DFAStatus.INCOMPLETE)
+                state = true
         }
         keywords.forEach {
             val status = it.dfa!!.match(string)
             if (status == DFA.DFAStatus.ACCEPT) {
                 return Pair(true, Pair(TokenType.KEYWORDS, it.name))
-            } else if (status == DFA.DFAStatus.INCOMPLETE && flag)
-                return Pair(true, null)
+            } else if (status == DFA.DFAStatus.INCOMPLETE)
+                state = true
         }
         identifier.forEach {
             val status = it.dfa!!.match(string)
             if (status == DFA.DFAStatus.ACCEPT) {
                 return Pair(true, Pair(TokenType.IDENTIFIER, it.name))
-            } else if (status == DFA.DFAStatus.INCOMPLETE && flag)
-                return Pair(true, null)
+            } else if (status == DFA.DFAStatus.INCOMPLETE)
+                state = true
         }
+        if (state)
+            return Pair(true, null)
         return Pair(false, null)
 
     }

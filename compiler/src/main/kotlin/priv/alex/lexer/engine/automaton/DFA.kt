@@ -20,7 +20,7 @@ class DFA(val pattern: String) : Cloneable, Serializable {
     }
 
 
-    private val dfa: Graph<Int, RegexEdge>
+    val dfa: Graph<Int, RegexEdge>
     private val startPoint = 0
     private val endPoint: Set<Int>
 

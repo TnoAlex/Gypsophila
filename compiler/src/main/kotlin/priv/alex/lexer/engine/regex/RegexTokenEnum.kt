@@ -16,5 +16,6 @@ enum class RegexTokenEnum (val value: String) {
     OPTIONAL("?"),
     OR("|"),
     PLUS_CLOSE("+"),
+    CUTOFF("!"),
     EOF("EOF")
 }

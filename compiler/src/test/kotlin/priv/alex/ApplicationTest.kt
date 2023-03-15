@@ -18,12 +18,14 @@ import javax.swing.JFrame
 
 
 fun main() {
+//    testDFA()
+//    nfaBuilderTest()
 //    testParser()
     testLrAnalyzer()
 }
 
 private fun nfaBuilderTest() {
-    val builder = NFABuilder("(\\-[0-9]|[0-9])([0-9]*\\.[0-9]+)")
+    val builder = NFABuilder("(\\-[1-9]|[0-9])([0-9]*)(\\-[1-9]|[0-9])([0-9]*i)")
     val jFrame = RegexGraphAdapter(builder.build())
     jFrame.defaultCloseOperation = JFrame.EXIT_ON_CLOSE
     jFrame.pack()
@@ -38,8 +40,14 @@ private fun codeReaderTest() {
 }
 
 private fun testDFA() {
-    val dfa = DFA("\"[ -~]*\"")
-    val res = dfa.match("\"main")
+    val dfa = DFA("(\\-[0-9]|[0-9])([0-9]*\\.[0-9]+)!(e[0-9]|e\\-[0-9])?")
+    val jFrame = RegexGraphAdapter(dfa.dfa)
+    jFrame.defaultCloseOperation = JFrame.EXIT_ON_CLOSE
+    jFrame.pack()
+    jFrame.isVisible = true
+    var res = dfa.match("13.7e-9")
+    println(res)
+    res = dfa.match("-3.5e-9")
     println(res)
 }
 
@@ -57,7 +65,7 @@ private fun testParser() {
 private fun testLrAnalyzer() {
     val code = CodeFile(File("F:\\testC\\scratch_1.cc"))
     val lexicalReader = LexicalReader(File("F:\\testC\\scratch.yml"))
-    val parserReader = ParserReader(File("F:\\testC\\test.yml"))
+    val parserReader = ParserReader(File("F:\\testC\\parser.yml"))
     val lexer = lexicalReader.readLexicon()
     val syntax = parserReader.readParser()
     val tokenLines = ArrayList<TokenLine>()
