@@ -89,10 +89,14 @@ class LRAnalyzer(
             val node = ASTNode(Pair(production.head.content, null))
             ast.addChild(null, node)
             if (production.body.content.all { it != NonTerminator("<EMPTY>") }) {
+                val t = ArrayDeque<ASTNode>()
                 production.body.content.forEach { _ ->
                     analyseStack.pop()
                     symbolStack.pop()
-                    ast.addChild(node, astStack.pop())
+                    t.push(astStack.pop())
+                }
+                t.forEach {
+                    ast.addChild(node, it)
                 }
             }
             symbolStack.push(Pair(production.head.content, null))
