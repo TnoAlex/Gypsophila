@@ -3,7 +3,9 @@ package priv.alex.core
 import java.io.File
 
 object ProcessorGlobalConfig {
-    var isMultithreading: Boolean = false
-    var threadNumber: Int = 4
-    var sourceFile : File? = null
+    var sourceFile: File? = null
+    var tokenOutput: Boolean = false
+    var syntaxFile: File? = null
+    var lexerFile: File? = null
+    var analyticsTableOutput: Boolean = false
 }

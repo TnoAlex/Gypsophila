@@ -1,21 +1,20 @@
 package priv.alex.io
 
 import com.google.gson.Gson
-import priv.alex.lexer.token.TokenFile
 import priv.alex.logger.Logger
+import priv.alex.parser.engine.lr.LRTable
 import java.io.File
 import java.io.FileWriter
 
 @Logger
-class LexicalWriter : Writer {
+class AnalyzeTableWriter : Writer {
     override fun writeTo(file: File, obj: Any) {
         try {
-            val tokenFile = obj as TokenFile
-            val outputFile = File(file.path + File.separator + tokenFile.fileName)
-            if (!outputFile.exists())
-                outputFile.createNewFile()
+            val tokenFile = obj as LRTable
+            if (!file.exists())
+                file.createNewFile()
             val json = Gson().toJson(tokenFile)
-            val writer = FileWriter(outputFile)
+            val writer = FileWriter(file)
             writer.use {
                 it.write(json)
             }
@@ -23,7 +22,5 @@ class LexicalWriter : Writer {
             log.error("An irreversible error occurred during the output process")
             throw RuntimeException(e.message, e.cause)
         }
-
     }
-
 }

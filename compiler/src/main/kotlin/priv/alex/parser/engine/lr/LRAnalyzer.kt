@@ -22,13 +22,11 @@ class LRAnalyzer(
 ) {
 
     private val analyseStack = ArrayDeque<Int>()
-
     //最右推导逆过程
-    private var ast = AST()
     private val astStack = ArrayDeque<ASTNode>()
     private val symbolStack = ArrayDeque<Pair<Symbol, Token?>>()
     private val productionMap: HashMap<Int, Production>
-    private val analyseTable: LRTable
+    val analyseTable: LRTable
 
     init {
         val builder = LRAnalyzerBuilder(productions, acceptProduction)
@@ -40,6 +38,7 @@ class LRAnalyzer(
         log.info("Parser ${tokenFile.fileName}")
         analyseStack.push(0)
         symbolStack.push(Pair(EOF(), null))
+        val ast = AST(tokenFile.fileName)
         tokenFile.tokens.forEach {
             var index = 0
             val token = ArrayList(it.tokens)
@@ -55,7 +54,7 @@ class LRAnalyzer(
                     astStack.push(ASTNode(Pair(action.second, token[index])))
                     index++
                 } else {
-                    reduce(action)
+                    reduce(action, ast)
                 }
             }
         }
@@ -64,7 +63,7 @@ class LRAnalyzer(
             throw RuntimeException("Syntax mismatch")
         }
         while (lastAction.first.action != Action.ACCEPT) {
-            reduce(lastAction)
+            reduce(lastAction, ast)
             lastAction = analyseTable.action(analyseStack.peek(), null) ?: let {
                 log.error("The current syntax cannot parse this token sequence")
                 throw RuntimeException("Syntax mismatch")
@@ -79,11 +78,11 @@ class LRAnalyzer(
             log.info("The current syntax cannot parse this token sequence")
             throw RuntimeException("Syntax  mismatch")
         }
-//清空分析栈
+        //清空分析栈
         return ast
     }
 
-    private fun reduce(action: Pair<LRAction, Symbol>) {
+    private fun reduce(action: Pair<LRAction, Symbol>, ast: AST) {
         val production = productionMap[action.first.actionTarget]!!
         if (production.head.content != NonTerminator("<EMPTY>")) {
             val node = ASTNode(Pair(production.head.content, null))

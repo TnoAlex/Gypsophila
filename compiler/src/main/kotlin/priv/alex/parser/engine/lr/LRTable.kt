@@ -1,12 +1,15 @@
 package priv.alex.parser.engine.lr
 
+import priv.alex.core.NoArg
 import priv.alex.lexer.token.Token
 import priv.alex.lexer.token.TokenType
 import priv.alex.parser.EOF
 import priv.alex.parser.Symbol
 import priv.alex.parser.Terminator
+import java.io.Serializable
 
-data class LRAction(val action: Action, val actionTarget: Int) {
+@NoArg
+data class LRAction(val action: Action, val actionTarget: Int) : Serializable {
     override fun toString(): String {
         val result = StringBuilder()
         result.append(action).append(" ").append(actionTarget)
@@ -21,7 +24,7 @@ enum class Action {
     ACCEPT
 }
 
-class LRTable {
+class LRTable : Serializable {
     private val actions = HashMap<Pair<Int, Symbol>, LRAction>()
     private val goto = HashMap<Pair<Int, Symbol>, Int>()
 

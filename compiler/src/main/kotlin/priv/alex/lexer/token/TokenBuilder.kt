@@ -115,7 +115,7 @@ class TokenBuilder(lexicons: HashMap<TokenType, ArrayList<Lexical>>) {
                                 ttoken.second!!.second
                             )
                         )
-                        index = tindex
+                        index = tindex - 1
                     }
                 }
             }

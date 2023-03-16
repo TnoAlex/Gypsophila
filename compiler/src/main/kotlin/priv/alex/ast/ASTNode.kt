@@ -19,10 +19,10 @@ data class ASTNode(val value: Pair<Symbol, Token?>) {
     }
 
     override fun toString(): String {
-        if (value.first is NonTerminator) {
-            return value.first.toString()
+        return if (value.first is NonTerminator) {
+            value.first.toString()
         } else {
-            return value.second!!.type.toString() + " : " + value.second!!.rawText
+            value.second!!.type.toString() + " : " + value.second!!.rawText
         }
     }
 

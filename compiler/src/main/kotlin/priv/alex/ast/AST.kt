@@ -4,8 +4,8 @@ import org.jgrapht.Graph
 import org.jgrapht.graph.DefaultDirectedGraph
 import org.jgrapht.graph.DefaultEdge
 
-class AST {
-     val graph: Graph<ASTNode, DefaultEdge> = DefaultDirectedGraph(DefaultEdge::class.java)
+class AST(val buildBy: String) {
+    val graph: Graph<ASTNode, DefaultEdge> = DefaultDirectedGraph(DefaultEdge::class.java)
 
     fun addChild(baseNode: ASTNode?, child: ASTNode) {
         graph.addVertex(child)
