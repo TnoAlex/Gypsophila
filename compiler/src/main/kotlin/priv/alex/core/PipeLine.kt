@@ -5,7 +5,6 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import priv.alex.ast.AST
 import priv.alex.code.CodeFile
-import priv.alex.code.log
 import priv.alex.io.AnalyzeTableWriter
 import priv.alex.io.AstWriter
 import priv.alex.io.LexicalWriter
@@ -42,7 +41,7 @@ class PipeLine(
         if (ProcessorGlobalConfig.tokenOutput) {
             val writer = LexicalWriter()
             try {
-                writer.writeTo(File(outPutFilePath + File.pathSeparator + tokenFile.fileName), tokenFile)
+                writer.writeTo(File(outPutFilePath + File.separator + tokenFile.fileName), tokenFile)
             } catch (e: RuntimeException) {
                 log.error("It is not possible to write out the token sequence -> ${tokenFile.fileName}")
             }
@@ -50,7 +49,7 @@ class PipeLine(
         if (ProcessorGlobalConfig.analyticsTableOutput) {
             val writer = AnalyzeTableWriter()
             try {
-                writer.writeTo(File(outPutFilePath + File.pathSeparator + "analyseTable.json"), lrAnalyzer.analyseTable)
+                writer.writeTo(File(outPutFilePath + File.separator + "analyseTable.json"), lrAnalyzer.analyseTable)
             } catch (e: RuntimeException) {
                 log.error("It is not possible to write out the analyse table -> analyseTable.json")
             }
@@ -65,7 +64,7 @@ class PipeLine(
     private fun astWriterTask(ast: AST) {
         val writer = AstWriter()
         try {
-            writer.writeTo(File(outPutFilePath + File.pathSeparator + ast.buildBy), ast)
+            writer.writeTo(File(outPutFilePath + File.separator + ast.buildBy.split(".")[0] + ".ast"), ast)
         } catch (e: RuntimeException) {
             log.error("It is not possible to write out the ast -> ${ast.buildBy}")
         }

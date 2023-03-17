@@ -1,27 +1,14 @@
 package priv.alex
 
 import com.github.ajalt.clikt.core.CliktCommand
-import com.github.ajalt.clikt.core.PrintMessage
-import com.github.ajalt.clikt.core.subcommands
-import com.github.ajalt.clikt.parameters.options.check
-import com.github.ajalt.clikt.parameters.options.eagerOption
-import com.github.ajalt.clikt.parameters.options.option
-import com.github.ajalt.clikt.parameters.options.required
+import com.github.ajalt.clikt.parameters.options.*
 import com.github.ajalt.clikt.parameters.types.file
-import priv.alex.cli.LexerCommand
-import priv.alex.cli.ParserCommand
 import priv.alex.core.Processor
 import priv.alex.core.ProcessorGlobalConfig
 
-class GypsophilaApplication : CliktCommand() {
+class Gypsophila : CliktCommand() {
 
-    init {
-        eagerOption("-h") {
-            throw PrintMessage(commandHelp)
-        }
-    }
-
-    private val codeFile by option("-i", help = "Source code to be processed").file(
+    private val codeFile by option("--input", help = "Source code to be processed").file(
         mustExist = true,
         mustBeReadable = true
     )
@@ -31,18 +18,34 @@ class GypsophilaApplication : CliktCommand() {
                 .isNotEmpty() else true
         }
 
-    override val commandHelp: String
-        get() = "To view the subcommand Help, use [Name -h]"
+    private val lexicalFile by option("--tp", help = "Lexical file path").file(
+        mustExist = true,
+        canBeDir = false,
+        mustBeReadable = true
+    ).required()
+
+    private val isGenerateLexer by option(help = "Whether to output token file").switch("--sl" to true).default(false)
+
+    private val syntaxFile by option("--sp", help = "Syntax file path").file(
+        mustExist = true,
+        canBeDir = false,
+        mustBeReadable = true
+    )
+
+    private val isGenerateAnalyseTable by option(help = "Whether to output predictive analytics tables").switch("--sa" to true)
+        .default(false)
 
     override fun run() {
         ProcessorGlobalConfig.sourceFile = codeFile
+        ProcessorGlobalConfig.lexerFile = lexicalFile
+        ProcessorGlobalConfig.tokenOutput = isGenerateLexer
+        ProcessorGlobalConfig.syntaxFile = syntaxFile
+        ProcessorGlobalConfig.analyticsTableOutput = isGenerateAnalyseTable
     }
 }
 
 fun main(args: Array<String>) {
-    GypsophilaApplication()
-        .subcommands(LexerCommand(), ParserCommand())
-        .main(args)
+    Gypsophila().main(args)
     Processor().run()
 }
 

@@ -1,10 +1,12 @@
 package priv.alex.ast
 
+import priv.alex.core.NoArg
 import priv.alex.lexer.token.Token
 import priv.alex.parser.NonTerminator
 import priv.alex.parser.Symbol
 import java.util.*
 
+@NoArg
 data class ASTNode(val value: Pair<Symbol, Token?>) {
 
     private val nodeId: String = UUID.randomUUID().toString()
