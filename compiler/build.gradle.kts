@@ -4,6 +4,8 @@ plugins {
     kotlin("jvm") version "1.8.0"
     id("org.jetbrains.kotlin.plugin.noarg") version "1.8.0"
     id("com.google.devtools.ksp") version "1.8.0-1.0.9"
+    id("com.github.johnrengelman.shadow") version "8.0.0"
+    application
 }
 
 group = "priv.alex"
@@ -12,6 +14,7 @@ version = "1.0-SNAPSHOT"
 repositories {
     mavenCentral()
 }
+
 
 java.sourceCompatibility = JavaVersion.VERSION_17
 
@@ -32,7 +35,6 @@ dependencies {
     ksp(project(":klogger"))
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
     implementation("com.google.code.gson:gson:2.10.1")
-    implementation("org.jgrapht:jgrapht-io:1.5.1")
     testImplementation("com.github.vlsi.mxgraph:jgraphx:4.2.2")
     testImplementation("org.jgrapht:jgrapht-ext:1.5.1")
 }
@@ -46,10 +48,37 @@ kotlin {
     }
 }
 
+
 tasks.test {
     useJUnitPlatform()
 }
 
 tasks.withType<KotlinCompile> {
     kotlinOptions.jvmTarget = "17"
+}
+
+val mainClassName = "priv.alex.GypsophilaApplicationKt" // 可执行的主类
+tasks.jar {
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+
+    manifest {
+        attributes["Main-Class"] = mainClassName
+    }
+    from({
+        configurations.runtimeClasspath.get().filter {
+            it.name.endsWith("jar")
+        }.map { zipTree(it) }
+    })
+    from(project.sourceSets.main.get().output)
+}
+
+tasks.shadowJar {
+    dependencies {
+        include(project.name)
+    }
+    mergeServiceFiles()
+    val shadowClass = mainClassName.removeSuffix("Kt")
+    application {
+        mainClass.set(shadowClass)
+    }
 }

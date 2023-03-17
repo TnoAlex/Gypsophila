@@ -1,7 +1,10 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
+    java
     kotlin("jvm") version "1.8.0"
+    id("com.github.johnrengelman.shadow") version "8.0.0"
+    application
 }
 
 group = "priv.alex"
@@ -13,15 +16,11 @@ repositories {
 buildscript {
     dependencies {
         classpath(kotlin("gradle-plugin", version = "1.8.0"))
+        classpath("gradle.plugin.com.github.johnrengelman:shadow:8.0.0")
     }
 }
 
-java.sourceCompatibility = JavaVersion.VERSION_11
-
-
-dependencies {
-    testImplementation(kotlin("test"))
-}
+java.sourceCompatibility = JavaVersion.VERSION_17
 
 
 tasks.test {
@@ -29,5 +28,6 @@ tasks.test {
 }
 
 tasks.withType<KotlinCompile> {
-    kotlinOptions.jvmTarget = "11"
+    kotlinOptions.jvmTarget = "17"
 }
+
