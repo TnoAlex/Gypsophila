@@ -1,0 +1,198 @@
+<Program>:
+  <Block>
+---
+<Program>:
+  - <Block>
+
+<Block>:
+  - <GlobalDeclList> <FuncList>
+  - <FuncList>
+
+<GlobalDeclList>:
+  - <DeclStmt> <GlobalDeclList>
+  - <EMPTY>
+
+<FuncList>:
+  - <Func> <FuncList>
+  - <EMPTY>
+
+<Func>:
+  - 'func <Id> ( <Params> ) : <Type> { <Stmts> }'
+
+<IfStmt>:
+  - if ( <Expr> ) { <Stmts> }
+  - if ( <Expr> ) { <Stmts> } else { <Stmts> }
+
+<WhileStmt>:
+  - while ( <Expr> ) { <Stmts> }
+
+<ForStmt>:
+  - for ( <Assign> ; <Expr> ; <Assign> ) { <Stmts> }
+
+<Params>:
+  - <Decl> , <Params>
+  - <Decl>
+  - <EMPTY>
+
+<Stmts>:
+  - <Stmt> <Stmts>
+  - <EMPTY>
+
+<Stmt>:
+  - <AssignStmt>
+  - <DeclStmt>
+  - <IfStmt>
+  - <WhileStmt>
+  - <ForStmt>
+  - <ReturnStmt>
+  - <FuncCall> ;
+
+<ReturnStmt>:
+  - return <Id> ;
+  - return ;
+
+<DeclStmt>:
+  - <Decl> ;
+  - <ArrayDecl> ;
+
+<ArrayDecl>:
+  - <Decl> [ Int ]
+
+<Decl>:
+  - <Type> <IdList>
+
+<Type>:
+  - int
+  - float
+  - string
+  - void
+  - bool
+  - plural
+
+<Array>:
+  - <Id> [ Int ]
+
+<IdList>:
+  - <Id> , <IdList>
+  - <Id>
+
+<AssignStmt>:
+  - <Assign> ;
+
+<Assign>:
+  - <IdList> = <Expr>
+  - <Decl> = <Expr>
+  - <Array> = <Expr>
+
+<Expr>:
+  - <Logic-Or>
+
+<Logic-Or>:
+  - <Logic-And>
+  - <Logic-Or> || <Logic-And>
+
+<Logic-And>:
+  - <Bitwise-Or>
+  - <Logic-And> && <Bitwise-Or>
+
+
+<Bitwise-Or>:
+  - <Bitwise-Xor>
+  - <Bitwise-Or> | <Bitwise-Xor>
+
+
+<Bitwise-Xor>:
+  - <Bitwise-And>
+  - <Bitwise-Xor> ^ <Bitwise-And>
+
+
+<Bitwise-And>:
+  - <Equality>
+  - <Bitwise-And> & <Equality>
+
+
+<Equality>:
+  - <Relational>
+  - <Equality> == <Relational>
+  - <Equality> != <Relational>
+
+
+<Relational>:
+  - <Shift>
+  - <Relational> < <Shift>
+  - <Relational> > <Shift>
+  - <Relational> <= <Shift>
+  - <Relational> >= <Shift>
+
+
+<Shift>:
+  - <AddSub>
+  - <Shift> << <AddSub>
+  - <Shift> << <AddSub>
+
+
+<AddSub>:
+  - <MulDiv>
+  - <AddSub> + <MulDiv>
+  - <AddSub> - <MulDiv>
+
+
+<MulDiv>:
+  - <Unary>
+  - <MulDiv> * <Unary>
+  - <MulDiv> / <Unary>
+
+
+<Unary>:
+  - <Primary>
+  - <UnaryOP> <Unary>
+  - <BoolOp> <Unary>
+
+
+<Primary>:
+  - ( <Expr> )
+  - ( <MulDiv> )
+  - ( <AddSub> )
+  - ( <Shift> )
+  - ( <Relational> )
+  - ( <Equality> )
+  - ( <Bitwise-And> )
+  - ( <Bitwise-Xor> )
+  - ( <Bitwise-Or> )
+  - ( <Logic-And> )
+  - ( <Logic-Or> )
+  - <Id>
+  - <Literal>
+  - <FuncCall>
+
+<UnaryOp>:
+  - '&'
+  - '*'
+  - '~'
+  - '!'
+
+<BoolOP>:
+  - '&&'
+  - '||'
+
+
+<FuncCall>:
+  - <Id> ( <ArgList> )
+
+<ArgList>:
+  - <Expr> , <ArgList>
+  - <Expr>
+  - <EMPTY>
+
+<Id>:
+  - Identifier
+
+<Literal>:
+  - Float
+  - Int
+  - String
+  - Bool
+  - Plural
+
+<EMPTY>:
+  - ""

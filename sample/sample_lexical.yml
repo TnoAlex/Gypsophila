@@ -1,0 +1,171 @@
+Literal:
+  Int:
+    value: null
+    regex: (\-[1-9]|[0-9])[0-9]*
+  Float:
+    value: null
+    regex: (\-[0-9]|[0-9])([0-9]*\.[0-9]+)!(e[0-9]|e\-[0-9])?
+  String:
+    value: null
+    regex: '"[ -~]*"'
+  Bool:
+    value: null
+    regex: 'true|false'
+  Plural:
+    value: null
+    regex: (\-[1-9]|[0-9])([0-9]*)(\-[1-9]|\+[0-9])([0-9]*i)
+
+
+Keywords:
+  int:
+    value: null
+    regex: int
+  float:
+    value: null
+    regex: float
+  string:
+    value: null
+    regex: string
+  bool:
+    value: null
+    regex: bool
+  if:
+    value: null
+    regex: if
+  void:
+    value: null
+    regex: void
+  return:
+    value: null
+    regex: return
+  while:
+    value: null
+    regex: while
+  for:
+    value: null
+    regex: for
+  else:
+    value: null
+    regex: else
+  func:
+    value: null
+    regex: func
+  plural:
+    value: null
+    regex: plural
+
+Identifier:
+  Identifier:
+    value: null
+    regex: (_[A-Za-z]|[A-Za-z])([A-Z]|[a-z]|[0-9]|_)*
+
+Operator:
+  plus:
+    value: +
+    regex: null
+  plus_plus:
+    value: ++
+    regex: null
+  minus:
+    value: "-"
+    regex: null
+  minus_minus:
+    value: "--"
+    regex: null
+  equal:
+    value: '=='
+    regex: null
+  non_equal:
+    value: '!='
+    regex: null
+  assignment:
+    value: '='
+    regex: null
+  plus_equal:
+    value: +=
+    regex: null
+  minus_equal:
+    value: -=
+    regex: null
+  plus_equal:
+    value: "*="
+    regex: null
+  great:
+    value: ">"
+    regex: null
+  less:
+    value: "<"
+    regex: null
+  great_equ:
+    value: ">="
+    regex: null
+  less_equ:
+    value: "<="
+    regex: null
+  mul:
+    value: "*"
+    regex: null
+  colon:
+    value: ":"
+    regex: null
+  div:
+    value: "/"
+    regex: null
+  bit_and:
+    value: '&'
+    regex: null
+  bit_or:
+    value: '|'
+    regex: null
+  logic_and:
+    value: '&&'
+    regex: null
+  logic_or:
+    value: '||'
+    regex: null
+  not:
+    value: '!'
+    regex: null
+
+
+Qualifier:
+  static:
+    value: null
+    regex: static
+
+Separator:
+  left_paren:
+    value: (
+    regex: null
+  right_paren:
+    value: )
+    regex: null
+  semicolon:
+    value: ;
+    regex: null
+  open_bracket:
+    value: '{'
+    regex: null
+  close_bracket:
+    value: '}'
+    regex: null
+  left_bracket:
+    value: ']'
+    regex: null
+  right_bracket:
+    value: '['
+    regex: null
+  double_quotes:
+    value: '"'
+    regex: null
+  apostrophe:
+    value: "'"
+    regex: null
+  comma:
+    value: ","
+    regex: null
+
+Comment:
+  comment:
+    value: null
+    regex: //.*
