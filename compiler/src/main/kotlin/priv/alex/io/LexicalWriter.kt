@@ -11,11 +11,9 @@ class LexicalWriter : Writer {
     override fun writeTo(file: File, obj: Any) {
         try {
             val tokenFile = obj as TokenFile
-            val outputFile = File(file.path + File.separator + tokenFile.fileName)
-            if (!outputFile.exists())
-                outputFile.createNewFile()
             val json = Gson().toJson(tokenFile)
-            val writer = FileWriter(outputFile)
+            val writer = FileWriter(file)
+            log.info("Write token sequence to ${tokenFile.fileName}")
             writer.use {
                 it.write(json)
             }

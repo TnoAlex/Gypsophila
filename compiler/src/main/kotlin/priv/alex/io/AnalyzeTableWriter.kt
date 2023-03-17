@@ -10,11 +10,12 @@ import java.io.FileWriter
 class AnalyzeTableWriter : Writer {
     override fun writeTo(file: File, obj: Any) {
         try {
-            val tokenFile = obj as LRTable
+            val lrTable = obj as LRTable
             if (!file.exists())
                 file.createNewFile()
-            val json = Gson().toJson(tokenFile)
+            val json = Gson().toJson(lrTable)
             val writer = FileWriter(file)
+            log.info("Write analyze table to analyseTable.json")
             writer.use {
                 it.write(json)
             }
