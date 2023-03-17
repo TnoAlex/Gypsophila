@@ -8,7 +8,7 @@ import priv.alex.core.ProcessorGlobalConfig
 
 class Gypsophila : CliktCommand() {
 
-    private val codeFile by option("--input", help = "Source code to be processed").file(
+    private val codeFile by option("-i", "--input", help = "Source code to be processed").file(
         mustExist = true,
         mustBeReadable = true
     )
@@ -18,21 +18,21 @@ class Gypsophila : CliktCommand() {
                 .isNotEmpty() else true
         }
 
-    private val lexicalFile by option("--tp", help = "Lexical file path").file(
+    private val lexicalFile by option("-tp", "--token_path", help = "Lexical file path").file(
         mustExist = true,
         canBeDir = false,
         mustBeReadable = true
     ).required()
 
-    private val isGenerateLexer by option(help = "Whether to output token file").switch("--sl" to true).default(false)
+    private val isGenerateLexer by option(help = "Whether to output token file").switch("-sl" to true).default(false)
 
-    private val syntaxFile by option("--sp", help = "Syntax file path").file(
+    private val syntaxFile by option("-sp", "--syntax_path", help = "Syntax file path").file(
         mustExist = true,
         canBeDir = false,
         mustBeReadable = true
     )
 
-    private val isGenerateAnalyseTable by option(help = "Whether to output predictive analytics tables").switch("--sa" to true)
+    private val isGenerateAnalyseTable by option(help = "Whether to output predictive analytics tables").switch("-sa" to true)
         .default(false)
 
     override fun run() {
