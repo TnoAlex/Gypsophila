@@ -9,7 +9,7 @@ import java.util.*
 @NoArg
 data class ASTNode(val value: Pair<Symbol, Token?>) {
 
-    private val nodeId: String = UUID.randomUUID().toString()
+   val nodeId: String = UUID.randomUUID().toString()
 
     override fun equals(other: Any?): Boolean {
         if (other == null) return false

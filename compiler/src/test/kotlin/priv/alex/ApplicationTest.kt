@@ -4,6 +4,7 @@ import priv.alex.code.CodeFile
 import priv.alex.gui.ASTAdapter
 import priv.alex.gui.CcGraphAdapter
 import priv.alex.gui.RegexGraphAdapter
+import priv.alex.io.AstReader
 import priv.alex.io.LexicalReader
 import priv.alex.io.ParserReader
 import priv.alex.lexer.engine.automaton.DFA
@@ -21,8 +22,11 @@ fun main() {
 //    testDFA()
 //    nfaBuilderTest()
 //    testParser()
-    testLrAnalyzer()
+//    testLrAnalyzer()
+    val reader =  AstReader(File("E:\\code\\Gypsophila\\sample\\sample_source.ast"))
+    reader.showAst()
 }
+
 
 private fun nfaBuilderTest() {
     val builder = NFABuilder("(\\-[1-9]|[0-9])([0-9]*)(\\-[1-9]|[0-9])([0-9]*i)")
@@ -63,9 +67,9 @@ private fun testParser() {
 }
 
 private fun testLrAnalyzer() {
-    val code = CodeFile(File("F:\\testC\\scratch_1.cc"))
-    val lexicalReader = LexicalReader(File("F:\\testC\\scratch.yml"))
-    val parserReader = ParserReader(File("F:\\testC\\parser.yml"))
+    val code = CodeFile(File("E:\\code\\Gypsophila\\sample\\sample_source.cc"))
+    val lexicalReader = LexicalReader(File("E:\\code\\Gypsophila\\sample\\sample_lexical.yml"))
+    val parserReader = ParserReader(File("E:\\code\\Gypsophila\\sample\\sample_syntax.yml"))
     val lexer = lexicalReader.readLexicon()
     val syntax = parserReader.readParser()
     val tokenLines = ArrayList<TokenLine>()

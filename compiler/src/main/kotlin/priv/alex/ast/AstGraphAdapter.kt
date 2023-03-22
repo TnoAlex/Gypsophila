@@ -1,4 +1,4 @@
-package priv.alex.gui
+package priv.alex.ast
 
 import com.mxgraph.layout.hierarchical.mxHierarchicalLayout
 import com.mxgraph.swing.mxGraphComponent
@@ -8,15 +8,13 @@ import org.jgrapht.ext.JGraphXAdapter
 import org.jgrapht.graph.DefaultEdge
 import org.jgrapht.graph.DefaultListenableGraph
 import org.jgrapht.graph.builder.GraphTypeBuilder
-import priv.alex.ast.ASTNode
-import priv.alex.core.OpenEdge
 import java.awt.Dimension
 import javax.swing.JFrame
 
-class ASTAdapter(graph: Graph<ASTNode, OpenEdge>) : JFrame() {
+class AstGraphAdapter(graph: Graph<ASTNode,DefaultEdge>) :JFrame(){
     init {
         val listenableGraph = DefaultListenableGraph(
-            GraphTypeBuilder.directed<ASTNode, AdapterEdge>().allowingMultipleEdges(true)
+            GraphTypeBuilder.directed<ASTNode, DefaultEdge>().allowingMultipleEdges(true)
                 .allowingSelfLoops(true)
                 .weighted(false)
                 .buildGraph()!!
@@ -41,7 +39,7 @@ class ASTAdapter(graph: Graph<ASTNode, OpenEdge>) : JFrame() {
             listenableGraph.addVertex(v)
         }
         for (e in graph.edgeSet()) {
-            listenableGraph.addEdge(graph.getEdgeSource(e), graph.getEdgeTarget(e), AdapterEdge(""))
+            listenableGraph.addEdge(graph.getEdgeSource(e), graph.getEdgeTarget(e), DefaultEdge())
         }
 
         val layout = mxHierarchicalLayout(adapter)

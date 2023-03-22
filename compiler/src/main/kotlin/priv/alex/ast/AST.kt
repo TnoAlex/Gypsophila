@@ -3,9 +3,10 @@ package priv.alex.ast
 import org.jgrapht.Graph
 import org.jgrapht.graph.DefaultDirectedGraph
 import org.jgrapht.graph.DefaultEdge
+import priv.alex.core.OpenEdge
 
 class AST(val buildBy: String) {
-    val graph: Graph<ASTNode, DefaultEdge> = DefaultDirectedGraph(DefaultEdge::class.java)
+    val graph: Graph<ASTNode, OpenEdge> = DefaultDirectedGraph(OpenEdge::class.java)
 
     fun addChild(baseNode: ASTNode?, child: ASTNode) {
         graph.addVertex(child)

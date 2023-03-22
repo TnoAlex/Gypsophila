@@ -31,12 +31,12 @@ dependencies {
     implementation("org.jgrapht:jgrapht-core:1.5.1")
     implementation("com.github.ajalt.clikt:clikt:3.5.2")
     implementation("ch.qos.logback:logback-classic:1.4.5")
+    implementation("org.jgrapht:jgrapht-ext:1.5.1")
     implementation(project(":klogger"))
     ksp(project(":klogger"))
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
     implementation("com.google.code.gson:gson:2.10.1")
-    testImplementation("com.github.vlsi.mxgraph:jgraphx:4.2.2")
-    testImplementation("org.jgrapht:jgrapht-ext:1.5.1")
+    implementation("com.github.vlsi.mxgraph:jgraphx:4.2.2")
 }
 
 kotlin {

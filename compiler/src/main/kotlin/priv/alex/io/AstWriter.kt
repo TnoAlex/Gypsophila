@@ -13,9 +13,6 @@ class AstWriter : Writer {
             val ast = obj as AST
             if (!file.exists())
                 file.createNewFile()
-//            val export = DOTExporter<ASTNode, DefaultEdge>{ v -> "label=\"$v\"" }
-//            val stringWriter = StringWriter()
-//            export.exportGraph(ast.graph, stringWriter)
             val writer = FileWriter(file)
             val jsonMap = HashMap<String, Any>()
             jsonMap["vertices"] = ast.graph.vertexSet()
