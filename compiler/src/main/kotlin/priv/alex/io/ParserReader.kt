@@ -5,6 +5,13 @@ import priv.alex.logger.Logger
 import priv.alex.parser.*
 import java.io.File
 
+/**
+ * Parser reader
+ *
+ * @constructor
+ *
+ * @param file The syntax to be read
+ */
 @Logger
 class ParserReader(file: File) : Reader {
 

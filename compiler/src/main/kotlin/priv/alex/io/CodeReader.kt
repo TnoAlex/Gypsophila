@@ -8,7 +8,12 @@ import java.io.RandomAccessFile
 import java.nio.ByteBuffer
 import java.nio.channels.FileChannel
 
-
+/**
+ * Code reader
+ *
+ * @property file The source file to be read into
+ * @constructor Create Code reader
+ */
 @Logger
 class CodeReader(private val file: File) : Reader {
 
@@ -33,6 +38,11 @@ class CodeReader(private val file: File) : Reader {
         }
     }
 
+    /**
+     * Read lines
+     *
+     * @return lines of source file
+     */
     fun readLines(): ArrayList<CodeLine> {
         fc ?: openChannel()
         val lines = ArrayList<CodeLine>(FILE_LINE_SIZE)

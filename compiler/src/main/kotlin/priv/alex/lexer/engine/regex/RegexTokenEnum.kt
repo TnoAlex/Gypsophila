@@ -1,5 +1,11 @@
 package priv.alex.lexer.engine.regex
 
+/**
+ * Regex token enum
+ *
+ * @property value Regex token value
+ * @constructor Create Regex token enum
+ */
 enum class RegexTokenEnum (val value: String) {
     L(" "),
     ANY("."),

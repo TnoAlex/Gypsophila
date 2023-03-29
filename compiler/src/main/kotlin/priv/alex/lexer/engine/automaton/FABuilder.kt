@@ -3,6 +3,11 @@ package priv.alex.lexer.engine.automaton
 import org.jgrapht.Graph
 import org.jgrapht.graph.builder.GraphTypeBuilder
 
+/**
+ * Fa builder
+ * The super class of DFABuilder and NFABuilder
+ * @constructor Create Fa builder
+ */
 internal abstract class FABuilder {
 
     protected val graph =

@@ -10,6 +10,14 @@ import priv.alex.parser.ProjectState
 import priv.alex.parser.engine.cc.CanonicalCluster
 import priv.alex.parser.engine.cc.CanonicalClusterEdge
 
+/**
+ * Lr analyzer builder
+ *
+ * @property acceptProduction The production that can be accpeted
+ * @constructor
+ *
+ * @param productions
+ */
 @Logger
 class LRAnalyzerBuilder(productions: Set<Production>, private val acceptProduction: Production) {
 
@@ -24,6 +32,12 @@ class LRAnalyzerBuilder(productions: Set<Production>, private val acceptProducti
         }
     }
 
+    /**
+     * Build
+     *
+     * @param cc CanonicalCluster graph
+     * @return LR analyse table
+     */
     fun build(cc: Graph<CanonicalCluster, CanonicalClusterEdge>): LRTable {
         log.info("Build Lr analyze table")
         cc.vertexSet().forEach {

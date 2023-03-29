@@ -2,6 +2,11 @@ package priv.alex.lexer.token
 
 import priv.alex.logger.Logger
 
+/**
+ * Token type
+ *
+ * @constructor Create  Token type
+ */
 @Logger
 enum class TokenType {
     KEYWORDS,
@@ -11,6 +16,7 @@ enum class TokenType {
     SEPARATOR,
     COMMENT,
     QUALIFIER;
+
     companion object {
         fun enumOf(str: String): TokenType {
             return when (str) {

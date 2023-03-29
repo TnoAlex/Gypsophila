@@ -1,6 +1,11 @@
 package priv.alex.lexer.engine.regex
 
-
+/**
+ * Regex token
+ *
+ * @property type  RegexTokenEnum
+ * @constructor Create Regex token
+ */
 class RegexToken(val type: RegexTokenEnum) {
 
     var value = type.value[0]

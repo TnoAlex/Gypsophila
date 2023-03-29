@@ -6,6 +6,13 @@ import priv.alex.lexer.engine.automaton.DFA
 import priv.alex.logger.Logger
 import java.util.*
 
+/**
+ * Token builder
+ *
+ * @constructor
+ *
+ * @param lexicons Lexical collections
+ */
 @Logger
 class TokenBuilder(lexicons: HashMap<TokenType, ArrayList<Lexical>>) {
 
@@ -19,6 +26,12 @@ class TokenBuilder(lexicons: HashMap<TokenType, ArrayList<Lexical>>) {
 
     private val separators: ArrayList<String> = (operator.keys.toList() + separator.keys.toList()) as ArrayList<String>
 
+    /**
+     * Build token
+     *
+     * @param line The line of source Code
+     * @return Token Lines of source Code
+     */
     fun buildToken(line: CodeLine): TokenLine {
         val words = line.split(separators)
         var index = 0

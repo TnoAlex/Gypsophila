@@ -6,6 +6,13 @@ import priv.alex.lexer.token.TokenType
 import priv.alex.logger.Logger
 import java.io.File
 
+/**
+ * Lexical reader
+ *
+ * @constructor
+ *
+ * @param file The lexical to be read
+ */
 @Logger
 class LexicalReader(file: File) : Reader {
 
@@ -25,16 +32,25 @@ class LexicalReader(file: File) : Reader {
         }
     }
 
+    /**
+     * Read lexicon
+     *
+     * @return Token type and Lexical
+     */
     fun readLexicon(): HashMap<TokenType, ArrayList<Lexical>> {
-        val res = HashMap<TokenType,ArrayList<Lexical>>(32)
+        val res = HashMap<TokenType, ArrayList<Lexical>>(32)
         yaml.forEach { (k, v) ->
             try {
                 val tokenType = TokenType.enumOf(k)
                 v as Map<String, Any>
                 val t = ArrayList<Lexical>()
                 v.forEach {
-                    t.add(Lexical(tokenType, it.key, (it.value as Map<String, String?>)["value"],
-                        (it.value as Map<String, String?>)["regex"]))
+                    t.add(
+                        Lexical(
+                            tokenType, it.key, (it.value as Map<String, String?>)["value"],
+                            (it.value as Map<String, String?>)["regex"]
+                        )
+                    )
                 }
                 res[tokenType] = t
             } catch (e: Exception) {

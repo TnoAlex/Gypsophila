@@ -3,7 +3,6 @@ package priv.alex.processor
 import com.google.devtools.ksp.processing.*
 import com.google.devtools.ksp.symbol.KSAnnotated
 import com.google.devtools.ksp.symbol.KSClassDeclaration
-import com.google.devtools.ksp.symbol.KSTypeArgument
 import com.google.devtools.ksp.symbol.KSVisitorVoid
 import com.google.devtools.ksp.validate
 import priv.alex.logger.Logger
@@ -17,7 +16,12 @@ internal class LoggerSymbolProcessorProvider : SymbolProcessorProvider {
         LoggerSymbolProcessor(environment)
 }
 
-
+/**
+ * Logger symbol processor
+ *
+ * @property environment
+ * @constructor Create  Logger symbol processor
+ */
 internal class LoggerSymbolProcessor(private val environment: SymbolProcessorEnvironment) : SymbolProcessor {
     override fun process(resolver: Resolver): List<KSAnnotated> {
         val symbols = resolver.getSymbolsWithAnnotation(LOGGER_CLASS)
@@ -32,7 +36,12 @@ internal class LoggerSymbolProcessor(private val environment: SymbolProcessorEnv
     }
 }
 
-
+/**
+ * Logger visitor
+ *
+ * @property environment
+ * @constructor Create  Logger visitor
+ */
 internal class LoggerVisitor(private val environment: SymbolProcessorEnvironment) : KSVisitorVoid() {
 
 

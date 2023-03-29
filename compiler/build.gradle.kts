@@ -5,6 +5,7 @@ plugins {
     id("org.jetbrains.kotlin.plugin.noarg") version "1.8.0"
     id("com.google.devtools.ksp") version "1.8.0-1.0.9"
     id("com.github.johnrengelman.shadow") version "8.0.0"
+    id("org.jetbrains.dokka") version "1.8.10"
     application
 }
 

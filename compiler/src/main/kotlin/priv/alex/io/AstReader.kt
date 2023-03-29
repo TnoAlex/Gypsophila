@@ -1,6 +1,5 @@
 package priv.alex.io
 
-import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import org.jgrapht.Graph
 import org.jgrapht.graph.DefaultDirectedGraph
@@ -15,17 +14,28 @@ import java.io.File
 import java.io.FileInputStream
 import javax.swing.JFrame
 
+/**
+ * Ast reader
+ *
+ * @property file Serialize the AST to be read into the file
+ * @constructor Create Ast reader
+ */
 @Logger
 class AstReader(val file: File) : Reader {
-    fun showAst(){
-        try{
+
+    /**
+     * Show ast
+     */
+    fun showAst() {
+        try {
             val astJson = ByteArray(file.length().toInt())
             val astFileStream = FileInputStream(file)
             astFileStream.use {
                 it.read(astJson)
             }
-            val gson = GsonBuilder().serializeNulls().registerTypeAdapter(Symbol::class.java,SymbolDeserializer()).create()
-            val json = String(astJson,Charsets.UTF_8)
+            val gson =
+                GsonBuilder().serializeNulls().registerTypeAdapter(Symbol::class.java, SymbolDeserializer()).create()
+            val json = String(astJson, Charsets.UTF_8)
             val astMap = gson.fromJson(json, HashMap::class.java)
             val graph: Graph<ASTNode, DefaultEdge> = DefaultDirectedGraph(DefaultEdge::class.java)
             (astMap["vertices"] as Collection<*>).forEach {

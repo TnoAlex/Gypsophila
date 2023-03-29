@@ -8,11 +8,15 @@ import ch.qos.logback.core.pattern.PatternLayoutBase
 import ch.qos.logback.core.pattern.color.*
 import ch.qos.logback.core.pattern.parser.Parser
 
+/**
+ * Log pattern
+ * Log configuration
+ * @constructor Create  Log pattern
+ */
 class LogPattern: PatternLayoutBase<ILoggingEvent>() {
     private val defaultConverterMap: MutableMap<String, String> = HashMap()
 
-    init
-    {
+    init {
         defaultConverterMap.putAll(Parser.DEFAULT_COMPOSITE_CONVERTER_MAP)
 
         defaultConverterMap["d"] = DateConverter::class.java.name

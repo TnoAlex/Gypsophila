@@ -2,6 +2,13 @@ package priv.alex.lexer.engine.automaton
 
 import org.jgrapht.Graph
 
+/**
+ * Nfa
+ *
+ * @constructor
+ *
+ * @param regex Regex string
+ */
 class NFA(regex: String) {
 
     private val nfa: Graph<Int, RegexEdge>
@@ -15,6 +22,12 @@ class NFA(regex: String) {
         endPoint = nfa.vertexSet().last()
     }
 
+    /**
+     * Epsilon closure
+     *
+     * @param status set of nfa status
+     * @return The state that an empty closure can reach
+     */
     fun epsilonClosure(status: Set<Int>): HashSet<Int> {
         val set = HashSet<Int>()
         status.forEach {
@@ -43,6 +56,12 @@ class NFA(regex: String) {
         return set
     }
 
+    /**
+     * Move to
+     *
+     * @param status the set of dfa
+     * @return The DFA in this group state can transition the state
+     */
     fun moveTo(status: Set<Int>): HashMap<Alphabet, MutableSet<Int>> {
         val res = HashMap<Alphabet, MutableSet<Int>>()
         status.forEach { v ->

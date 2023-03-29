@@ -2,6 +2,13 @@ package priv.alex.lexer.engine.automaton
 
 import priv.alex.core.OpenEdge
 
+/**
+ * Regex edge
+ *
+ * @property cChar A character to recognize
+ * @property cSet A set of characters to recognize
+ * @constructor Create Regex edge
+ */
 class RegexEdge(val cChar: Char?, val cSet: Set<Char>?) : OpenEdge() {
 
     var epsilon: Boolean = false

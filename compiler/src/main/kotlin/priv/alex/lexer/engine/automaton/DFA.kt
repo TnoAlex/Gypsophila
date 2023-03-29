@@ -9,11 +9,22 @@ import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.full.createInstance
 import kotlin.reflect.full.declaredMemberProperties
 
+/**
+ * Dfa
+ *
+ * @property pattern Regex string
+ * @constructor Create  Dfa
+ */
 @NoArg
 @Logger
-class DFA(val pattern: String) : Cloneable, Serializable {
+class DFA(private val pattern: String) : Cloneable, Serializable {
 
-    enum class DFAStatus{
+    /**
+     * Dfa status
+     * The identification status of the DFA
+     * @constructor Create Dfa status
+     */
+    enum class DFAStatus {
         ACCEPT,
         REFUSE,
         INCOMPLETE
@@ -32,19 +43,24 @@ class DFA(val pattern: String) : Cloneable, Serializable {
         endPoint = Collections.unmodifiableSet(builder.endPoint)
     }
 
-
+    /**
+     * Match
+     *
+     * @param str The string to match
+     * @return DFAStatus
+     */
     fun match(str: String): DFAStatus {
         var currentNode = startPoint
-        str.forEach {c->
+        str.forEach { c ->
             val edge = dfa.outgoingEdgesOf(currentNode)
             edge.filter { it.match(c) }.let {
                 if (it.isEmpty()) return DFAStatus.REFUSE
-                else{
+                else {
                     // 优先匹配单字符
                     currentNode = if (it.none { e -> e.cChar != null })
                         it.first().target
                     else{
-                        it.first{e-> e.cChar!=null}.target
+                        it.first{ e-> e.cChar!=null}.target
                     }
                 }
             }

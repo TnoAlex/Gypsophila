@@ -6,8 +6,19 @@ import priv.alex.logger.Logger
 import java.io.File
 import java.io.FileWriter
 
+/**
+ * Lexical writer
+ *
+ * @constructor Create Lexical writer
+ */
 @Logger
 class LexicalWriter : Writer {
+    /**
+     * Write to
+     *
+     * @param file The path of the file to write
+     * @param obj The Token file to be written to the file
+     */
     override fun writeTo(file: File, obj: Any) {
         try {
             val tokenFile = obj as TokenFile

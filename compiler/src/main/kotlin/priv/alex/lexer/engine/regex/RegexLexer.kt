@@ -1,12 +1,22 @@
 package priv.alex.lexer.engine.regex
 
+/**
+ * Regex lexer
+ *
+ * @property pattern Regex string
+ * @constructor Create  Regex lexer
+ */
 class RegexLexer(private val pattern: String) {
 
     private var position: Int = 0
     var currentToken: RegexToken = RegexToken(RegexTokenEnum.L)
         private set
 
-
+    /**
+     * Advance
+     * Provide the next Regex token
+     * @return RegexToken
+     */
     fun advance(): RegexToken {
         if (position == pattern.length) {
             currentToken = RegexToken(RegexTokenEnum.EOF)

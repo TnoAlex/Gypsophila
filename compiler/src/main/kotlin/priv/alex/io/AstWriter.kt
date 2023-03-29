@@ -6,8 +6,19 @@ import priv.alex.logger.Logger
 import java.io.File
 import java.io.FileWriter
 
+/**
+ * Ast writer
+ *
+ * @constructor Create Ast writer
+ */
 @Logger
 class AstWriter : Writer {
+    /**
+     * Write to
+     *
+     *@param file The path of the file to write
+     *@param obj The AST to be written to the file
+     */
     override fun writeTo(file: File, obj: Any) {
         try {
             val ast = obj as AST

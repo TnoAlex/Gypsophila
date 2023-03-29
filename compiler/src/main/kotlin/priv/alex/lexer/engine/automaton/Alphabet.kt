@@ -1,5 +1,12 @@
 package priv.alex.lexer.engine.automaton
 
+/**
+ * Alphabet
+ *
+ * @constructor
+ *
+ * @param edge The RegexEdge
+ */
 class Alphabet(edge: RegexEdge) {
     private var cSet: Set<Char>? = null
     private var cChar: Char? = null
@@ -12,6 +19,7 @@ class Alphabet(edge: RegexEdge) {
         invert = edge.invert
         epsilon = edge.epsilon
     }
+
     constructor():this(RegexEdge(false))
 
     companion object {

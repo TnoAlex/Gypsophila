@@ -1,5 +1,12 @@
 package priv.alex.parser.engine.cc
 
+/**
+ * CanonicalCluster
+ *
+ * @property item The Canonical Cluster Item of Canonical Cluster
+ * @property ccId The id of Canonical Cluster
+ * @constructor Create  Canonical Cluster
+ */
 data class CanonicalCluster(val item: Set<CanonicalClusterItem>, val ccId: Int) : Iterable<CanonicalClusterItem>,
     Cloneable {
 

@@ -1,5 +1,11 @@
 package priv.alex.parser
 
+/**
+ * Production body
+ * The super class of EmptyProductionBody
+ * @property content The content of Production body
+ * @constructor Create  Production body
+ */
 open class ProductionBody(val content: List<Symbol>) : Cloneable {
 
     var projectState = ProjectState.SHIFT

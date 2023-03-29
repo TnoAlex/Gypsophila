@@ -1,5 +1,12 @@
 package priv.alex.parser
 
+/**
+ * Production
+ *
+ * @property head Production head
+ * @property body Production body
+ * @constructor Create empty Production
+ */
 data class Production(val head: ProductionHead, val body: ProductionBody) : Cloneable {
 
     override fun equals(other: Any?): Boolean {

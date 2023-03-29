@@ -3,6 +3,13 @@ package priv.alex.parser.engine.cc
 import priv.alex.parser.Production
 import priv.alex.parser.Symbol
 
+/**
+ * Canonical cluster item
+ *
+ * @property production
+ * @property sc A collection of forward search characters
+ * @constructor Create Canonical cluster item
+ */
 data class CanonicalClusterItem(val production: Production, val sc: HashSet<Symbol>) : Cloneable {
 
     override fun equals(other: Any?): Boolean {

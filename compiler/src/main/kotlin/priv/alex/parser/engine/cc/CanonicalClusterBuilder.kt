@@ -5,6 +5,15 @@ import org.jgrapht.graph.builder.GraphTypeBuilder
 import priv.alex.logger.Logger
 import priv.alex.parser.*
 
+
+/**
+ * Canonical cluster builder
+ *
+ * @constructor
+ *
+ * @param entryPoint The start Production
+ * @param productionList The list of Prouctions
+ */
 @Logger
 class CanonicalClusterBuilder(entryPoint: Production, productionList: List<Production>) {
 
@@ -51,6 +60,11 @@ class CanonicalClusterBuilder(entryPoint: Production, productionList: List<Produ
         addNode(initCc)
     }
 
+    /**
+     * Build
+     *
+     * @return Canonical Cluster Graph
+     */
     fun build(): Graph<CanonicalCluster, CanonicalClusterEdge> {
         log.info("Try to build canonical cluster")
         val ccQueue = ArrayDeque<CanonicalCluster>()

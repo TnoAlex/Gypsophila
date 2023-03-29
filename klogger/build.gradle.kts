@@ -2,6 +2,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin("jvm") version "1.8.0"
+    id("org.jetbrains.dokka") version "1.8.10"
 }
 
 group = "priv.alex"

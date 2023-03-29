@@ -5,7 +5,13 @@ import priv.alex.lexer.engine.regex.RegexLexer
 import priv.alex.lexer.engine.regex.RegexToken
 import priv.alex.lexer.engine.regex.RegexTokenEnum.*
 
-
+/**
+ * Nfa builder
+ *
+ * @constructor
+ *
+ * @param pattern Regex string
+ */
 internal class NFABuilder(pattern: String) : FABuilder() {
 
     private val lexer = RegexLexer(pattern)
@@ -27,6 +33,11 @@ internal class NFABuilder(pattern: String) : FABuilder() {
      * group ::= ("(" expr ")"*|+|?|)*
      */
 
+    /**
+     * Build
+     *
+     * @return NFA graph
+     */
     override fun build(): Graph<Int, RegexEdge> {
         group()
         reachable()

@@ -6,8 +6,19 @@ import priv.alex.parser.engine.lr.LRTable
 import java.io.File
 import java.io.FileWriter
 
+/**
+ * Analyze table writer
+ *
+ * @constructor Create  Analyze table writer
+ */
 @Logger
 class AnalyzeTableWriter : Writer {
+    /**
+     * Write to
+     *
+     * @param file The path of the file to write
+     * @param obj The analysis table to be written to the file
+     */
     override fun writeTo(file: File, obj: Any) {
         try {
             val lrTable = obj as LRTable

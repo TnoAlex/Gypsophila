@@ -14,6 +14,15 @@ import priv.alex.parser.engine.cc.CanonicalCluster
 import priv.alex.parser.engine.cc.CanonicalClusterEdge
 import java.util.*
 
+/**
+ * Lr analyzer
+ *
+ * @property acceptProduction The production that can be accpeted
+ * @constructor
+ *
+ * @param productions production list
+ * @param cc CanonicalCluster graph
+ */
 @Logger
 class LRAnalyzer(
     productions: Set<Production>,
@@ -22,6 +31,7 @@ class LRAnalyzer(
 ) {
 
     private val analyseStack = ArrayDeque<Int>()
+
     //最右推导逆过程
     private val astStack = ArrayDeque<ASTNode>()
     private val symbolStack = ArrayDeque<Pair<Symbol, Token?>>()
@@ -34,6 +44,12 @@ class LRAnalyzer(
         analyseTable = builder.build(cc)
     }
 
+    /**
+     * Analyze
+     *
+     * @param tokenFile The file of Token
+     * @return AST of input
+     */
     fun analyze(tokenFile: TokenFile): AST {
         log.info("Parser ${tokenFile.fileName}")
         analyseStack.push(0)

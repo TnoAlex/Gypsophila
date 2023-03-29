@@ -4,7 +4,6 @@ import priv.alex.code.CodeFile
 import priv.alex.gui.ASTAdapter
 import priv.alex.gui.CcGraphAdapter
 import priv.alex.gui.RegexGraphAdapter
-import priv.alex.io.AstReader
 import priv.alex.io.LexicalReader
 import priv.alex.io.ParserReader
 import priv.alex.lexer.engine.automaton.DFA
@@ -19,12 +18,12 @@ import javax.swing.JFrame
 
 
 fun main() {
-//    testDFA()
+    testDFA()
 //    nfaBuilderTest()
 //    testParser()
 //    testLrAnalyzer()
-    val reader =  AstReader(File("E:\\code\\Gypsophila\\sample\\sample_source.ast"))
-    reader.showAst()
+//    val reader =  AstReader(File("E:\\code\\Gypsophila\\sample\\sample_source.ast"))
+//    reader.showAst()
 }
 
 
@@ -44,7 +43,7 @@ private fun codeReaderTest() {
 }
 
 private fun testDFA() {
-    val dfa = DFA("(\\-[0-9]|[0-9])([0-9]*\\.[0-9]+)!(e[0-9]|e\\-[0-9])?")
+    val dfa = DFA("(a)*")
     val jFrame = RegexGraphAdapter(dfa.dfa)
     jFrame.defaultCloseOperation = JFrame.EXIT_ON_CLOSE
     jFrame.pack()

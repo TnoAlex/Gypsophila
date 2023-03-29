@@ -2,7 +2,12 @@ package priv.alex.lexer.engine.automaton
 
 import org.jgrapht.Graph
 
-
+/**
+ * Dfa builder
+ *
+ * @property nfa The nfa
+ * @constructor Create  Dfa builder
+ */
 internal class DFABuilder(private val nfa: NFA) : FABuilder() {
 
     private val nodeMap = HashMap<HashSet<Int>, Int>()
@@ -12,6 +17,10 @@ internal class DFABuilder(private val nfa: NFA) : FABuilder() {
         addNode()
     }
 
+    /**
+     * Build   DFA from nfa
+     * @return dfa graph
+     */
     override fun build(): Graph<Int, RegexEdge> {
         deterministic()
         nodeMap.filter { it.key.containsAny(setOf(nfa.endPoint)) }.forEach { (_, v) -> endPoint.add(v) }
