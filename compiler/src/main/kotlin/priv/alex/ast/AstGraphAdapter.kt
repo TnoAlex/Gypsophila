@@ -11,6 +11,13 @@ import org.jgrapht.graph.builder.GraphTypeBuilder
 import java.awt.Dimension
 import javax.swing.JFrame
 
+/**
+ * Ast graph adapter
+ *
+ * @constructor
+ *
+ * @param graph AST
+ */
 class AstGraphAdapter(graph: Graph<ASTNode,DefaultEdge>) :JFrame(){
     init {
         val listenableGraph = DefaultListenableGraph(

@@ -1,15 +1,28 @@
 package priv.alex.code
 
+/**
+ * Code line
+ *
+ * @property position
+ * @property content
+ * @constructor Create Code line
+ */
 data class CodeLine(val position: Int, val content: String) {
     val length: Int = content.length
 
+    /**
+     * Split
+     *
+     * @param separator A collection of delimiters
+     * @return Words of Line
+     */
     fun split(separator: ArrayList<String>): ArrayList<String> {
         val words = ArrayList<String>()
         val t = StringBuilder()
         var i = 0
         while (i < content.length) {
             if (content[i] == '.') {
-                if (t.all { it in '0'..'9' }){
+                if (t.all { it in '0'..'9' }) {
                     t.append('.')
                     i++
                 }
@@ -32,8 +45,7 @@ data class CodeLine(val position: Int, val content: String) {
                     if (content.slice(i..i + 1) in separator) {
                         words.add(content.slice(i..i + 1))
                         i++
-                    }
-                    else {
+                    } else {
                         words.add(content.slice(i..i))
                     }
                 } else {
@@ -49,8 +61,6 @@ data class CodeLine(val position: Int, val content: String) {
     }
 
     private fun asciiSeparator(char: Char): Boolean {
-        if (char < '0' || (char in ':'..'@') || (char in '['..'`') || char > 'z')
-            return true
-        return false
+        return char < '0' || (char in ':'..'@') || (char in '['..'`') || char > 'z'
     }
 }

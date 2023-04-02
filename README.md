@@ -33,8 +33,8 @@ Identifier:
 
 文法文件同样以`YAML`格式组织，每个文法文件分为两部分：文法起始产生式和其他文法产生式。文法起始产生式需要在文法文件头单独声明。
 
-**⚠️文法仅支持以单独产生式为起始产生式的文法，非终结符需以`<>`包裹，符号之间以空格区分，对于`A -> A B|A c`这样带有`或`
-的产生式，需要改写为以下格式 **
+*⚠️文法仅支持以单独产生式为起始产生式的文法，非终结符需以`<>`包裹，符号之间以空格区分，对于`A -> A B|A c`这样带有`或`
+的产生式，需要改写为以下格式 *
 
 ```yaml
 <A>:
@@ -79,7 +79,13 @@ Options:
 可以按照以下方法使用
 
 ```bash
-java -jar gypsophila_version.jar -i test.c -tp lexer.yml -sl -sp syntax.yml -sa
+java -jar gypsophila_version.jar -i test.c -lp lexer.yml -sl -sp syntax.yml -sa
 ```
 
-**⚠️最低JDK版本需要为 Java 17 **
+如果想要可视化查看抽象语法树，可以使用以下命令：
+
+```bash
+java -jar gypsophila_version.jar -show xxx.ast
+```
+
+*⚠️最低JDK版本需要为 Java 17 *

@@ -4,6 +4,13 @@ import priv.alex.logger.Logger
 import java.io.File
 import kotlin.system.exitProcess
 
+/**
+ * Code container
+ *
+ * @constructor
+ *
+ * @param file The file of source code
+ */
 @Logger
 class CodeContainer(file: File) {
 
@@ -17,20 +24,25 @@ class CodeContainer(file: File) {
                     codeFiles.add(CodeFile(it))
                 else
                     log.warn("${it.name} -> Insufficient permissions to read")
-            }?:let {
+            } ?: let {
                 log.error("Empty Directory!")
                 throw RuntimeException("Empty Directory")
             }
         }
-        if (file.isFile){
+        if (file.isFile) {
             codeFiles.add(CodeFile(file))
         }
-        if (codeFiles.isEmpty()){
+        if (codeFiles.isEmpty()) {
             log.warn("No files were read")
             exitProcess(0)
         }
     }
 
+    /**
+     * Advance
+     *
+     * @return next CodeFile (If exist)
+     */
     fun advance(): CodeFile? {
         return if (position < codeFiles.size) {
             position++

@@ -15,12 +15,25 @@ import priv.alex.logger.Logger
 import priv.alex.parser.engine.lr.LRAnalyzer
 import java.io.File
 
+/**
+ * Pipe line
+ *
+ * @property tokenBuilder
+ * @property lrAnalyzer
+ * @property outPutFilePath
+ * @constructor Create Pipeline
+ */
 @Logger
 class PipeLine(
     private val tokenBuilder: TokenBuilder,
     private val lrAnalyzer: LRAnalyzer,
     private val outPutFilePath: String
 ) {
+    /**
+     * Process
+     *
+     * @param codeFile source code file
+     */
     suspend fun process(codeFile: CodeFile) = coroutineScope {
         val tokenBuildTask = async(Dispatchers.Default) { tokenBuildTask(codeFile) }
         val writerTask = async(Dispatchers.IO) { tokenWriterTask(tokenBuildTask.await()) }

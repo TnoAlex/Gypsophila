@@ -1,14 +1,20 @@
 package priv.alex
 
 import com.github.ajalt.clikt.core.CliktCommand
-import com.github.ajalt.clikt.core.subcommands
-import com.github.ajalt.clikt.parameters.options.*
+import com.github.ajalt.clikt.parameters.options.check
+import com.github.ajalt.clikt.parameters.options.default
+import com.github.ajalt.clikt.parameters.options.option
+import com.github.ajalt.clikt.parameters.options.switch
 import com.github.ajalt.clikt.parameters.types.file
 import priv.alex.core.Processor
 import priv.alex.core.ProcessorGlobalConfig
 import priv.alex.io.AstReader
-import kotlin.system.exitProcess
 
+/**
+ * Gypsophila
+ * Command line parser
+ * @constructor Create Command line parser
+ */
 class Gypsophila : CliktCommand() {
     private val showAst by option("-show", "--show_ast", help = "Show Ast").file(
         mustExist = true,
@@ -20,9 +26,9 @@ class Gypsophila : CliktCommand() {
         mustExist = true,
         mustBeReadable = true
     ).check {
-            if (it.isDirectory) it.listFiles()!!
-                .isNotEmpty() else true
-        }
+        if (it.isDirectory) it.listFiles()!!
+            .isNotEmpty() else true
+    }
 
     private val lexicalFile by option("-lp", "--lexer_path", help = "Lexical file path").file(
         mustExist = true,

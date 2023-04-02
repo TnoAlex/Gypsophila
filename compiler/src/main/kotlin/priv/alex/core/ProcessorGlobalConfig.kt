@@ -2,6 +2,11 @@ package priv.alex.core
 
 import java.io.File
 
+/**
+ * Processor global config
+ *
+ * @constructor Create Processor global config
+ */
 object ProcessorGlobalConfig {
     var sourceFile: File? = null
     var tokenOutput: Boolean = false

@@ -12,6 +12,11 @@ import priv.alex.parser.engine.cc.CanonicalClusterBuilder
 import priv.alex.parser.engine.lr.LRAnalyzer
 import java.io.File
 
+/**
+ * Processor
+ *
+ * @constructor Create  Processor
+ */
 @Logger
 class Processor {
     init {
@@ -32,6 +37,10 @@ class Processor {
     private val syntax = ParserReader(ProcessorGlobalConfig.syntaxFile!!).readParser()
     private val tokenBuilder = TokenBuilder(lexer)
 
+    /**
+     * Run lexical and grammatical analysis
+     *
+     */
     fun run() {
 
         log.info("Build pipeline ...")

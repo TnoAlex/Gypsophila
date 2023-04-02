@@ -6,10 +6,16 @@ import priv.alex.parser.NonTerminator
 import priv.alex.parser.Symbol
 import java.util.*
 
+/**
+ * Ast node
+ *
+ * @property value Tree node value
+ * @constructor Create Ast node
+ */
 @NoArg
 data class ASTNode(val value: Pair<Symbol, Token?>) {
 
-   val nodeId: String = UUID.randomUUID().toString()
+    val nodeId: String = UUID.randomUUID().toString()
 
     override fun equals(other: Any?): Boolean {
         if (other == null) return false

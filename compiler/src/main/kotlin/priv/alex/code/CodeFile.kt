@@ -5,6 +5,13 @@ import priv.alex.logger.Logger
 import java.io.File
 import java.io.IOException
 
+/**
+ * Code file
+ *
+ * @constructor
+ *
+ * @param file source code file
+ */
 @Logger
 class CodeFile(file: File) {
 

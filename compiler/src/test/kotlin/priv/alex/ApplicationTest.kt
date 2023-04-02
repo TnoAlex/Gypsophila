@@ -18,10 +18,10 @@ import javax.swing.JFrame
 
 
 fun main() {
-    testDFA()
+//    testDFA()
 //    nfaBuilderTest()
 //    testParser()
-//    testLrAnalyzer()
+    testLrAnalyzer()
 //    val reader =  AstReader(File("E:\\code\\Gypsophila\\sample\\sample_source.ast"))
 //    reader.showAst()
 }
