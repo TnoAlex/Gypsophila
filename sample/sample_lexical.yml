@@ -87,7 +87,7 @@ Operator:
   minus_equal:
     value: -=
     regex: null
-  plus_equal:
+  mul_equal:
     value: "*="
     regex: null
   great:
