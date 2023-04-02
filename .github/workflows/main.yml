@@ -15,7 +15,7 @@ jobs:
      - name: Chmod
        run: chmod +x ./gradlew
      - name: Gradle Dependency Submission
-       uses: mikepenz/gradle-dependency-submission@v0.8.3
+       uses: mikepenz/gradle-dependency-submission@v0.8.6
        with:
           use-gradlew: true
           gradle-project-path: "./"
